@@ -1,0 +1,10 @@
+
+Format for motor commands are as follows. String in the format of A### B### C###
+Motor one forward A,  Backwards 'a'  else off
+Motor two forward B,  Backwards 'b'  else off
+Motor three forward C,  Backwards 'c'  else off
+Motor speed from 0 - 255
+
+if sending a value of less then 100 leave blanks for digits larger then msd 
+IE  A  3 B123 C 33  Will send all motors forward, A at speed 3,  B at speed 123 and C at speed 33
+Errors will occur if A003 B123 C033 are used.
