@@ -1,15 +1,7 @@
 /*
-  WiFi UDP Send and Receive String
-
- This sketch wait an UDP packet on localPort using a WiFi shield.
- When a packet is received an Acknowledge packet is sent to the client on port remotePort
-
- Circuit:
- * WiFi shield attached
-
- created 30 December 2012
- by dlf (Metodo2 srl)
-
+    Swarm robot basic controls
+    Used UDPSEND/RECIEVE for setup
+    Controls three wheels of the holonomic robot using 3 seperate pwm's
  */
 
 #include <stdio.h>
@@ -18,7 +10,38 @@
 #include <SPI.h>
 #include <WiFi101.h>
 #include <WiFiUdp.h>
+#include <TimerOne.h>
 
+
+const int HALT1 = 22;
+const int HALT2 = 23;
+const int HALT3 = 24;
+const int DIR1 = 25;
+const int DIR2 = 26;
+const int DIR3 = 27;
+
+const int MOTOR1 = 2;
+const int MOTOR2 = 3;
+const int MOTOR3 = 5;
+
+const int ENCODERE1 = 30;
+const int ENCODERE2 = 31;
+const int ENCODERE3 = 32;
+const int ENCODERCOUNT1 = 19;
+const int ENCODERCOUNT2 = 20;
+const int ENCODERCOUNT3 = 21;
+
+const int TEST = 40;   //Battery test
+
+
+
+
+int battery = 6;
+float batterylevel = 0;
+
+int count1 =0;
+int count2 =0;
+int count3 =0;
 int status = WL_IDLE_STATUS;
 char ssid[] = "XSABIN"; //  your network SSID (name) //ip address 10.0.0.39
 char pass[] = "A8970aacef768421bd8797";    // your network password (use for WPA, or use as key for WEP)
@@ -36,15 +59,46 @@ int outpwm2 = 0;
 char pwm2[2]; //buffer for pwm input
 int outpwm3 = 0;
 char pwm3[2]; //buffer for pwm input
-char  ReplyBuffer[] = "acknowledged";       // a string to send back
+char  ReplyBuffer[] = "ACK0";       // a string to send back
+int microseconds = 50000;
 
 WiFiUDP Udp;
 
 void setup() {
   WiFi.setPins(8,7,4);
-  pinMode(3, OUTPUT);      // set the LED pin mode
-  pinMode(5, OUTPUT);      // powers motor
-  pinMode(6, OUTPUT);      // powers motor
+
+  
+  pinMode(MOTOR1, OUTPUT);      // powers motor1
+  pinMode(MOTOR2, OUTPUT);      // powers motor2
+  pinMode(MOTOR3, OUTPUT);      // powers motor3
+  pinMode(HALT1, OUTPUT);     // motor halt1
+  pinMode(HALT2, OUTPUT);     // motor halt2
+  pinMode(HALT3, OUTPUT);     // motor halt3
+  pinMode(DIR1, OUTPUT);     // motor dir1
+  pinMode(DIR2, OUTPUT);     // motor dir2
+  pinMode(DIR3, OUTPUT);     // motor dir3
+
+  pinMode(ENCODERE1, OUTPUT);     // encoder enable1
+  pinMode(ENCODERE2, OUTPUT);     // encoder enable2
+  pinMode(ENCODERE3, OUTPUT);     // encoder enable3
+  pinMode(ENCODERCOUNT1, INPUT_PULLUP);  //interrupts for encoder1
+  pinMode(ENCODERCOUNT2, INPUT_PULLUP);  //interrupts for encoder2
+  pinMode(ENCODERCOUNT3, INPUT_PULLUP);  //interrupts for encoder3
+
+   pinMode(TEST, OUTPUT);     // Powertest enable
+   pinMode(A0, INPUT);
+  
+  
+  
+  attachInterrupt(digitalPinToInterrupt(19), counter1, FALLING);
+  attachInterrupt(digitalPinToInterrupt(20), counter2, FALLING);
+  attachInterrupt(digitalPinToInterrupt(21), counter3, FALLING);
+  Timer1.initialize(microseconds);
+  Timer1.attachInterrupt(checkspeed);
+  
+  
+  
+  
   //Initialize serial and wait for port to open:
   Serial.begin(9600);
   while (!Serial) {
@@ -113,19 +167,53 @@ void loop() {
     Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
     Udp.write(ReplyBuffer);
     Udp.endPacket();
-  }
-  if(packetBuffer[0] == 'A'){
-//      analogWrite(5, LOW);
-//      analogWrite(6, outpwm1);
-      analogWrite(3, outpwm1);               // GET /H turns the LED on
-  }else if(packetBuffer[0] == 'a'){
-//      analogWrite(6, LOW);
-//      analogWrite(5, outpwm1);
-      analogWrite(3, outpwm1);               // GET /H turns the LED on
-  }else{
-//      analogWrite(6, LOW);
-//      analogWrite(5, LOW);
-      analogWrite(3, LOW);               // GET /H turns the LED on
+  
+    if(packetBuffer[0] == 'A'){ //Wheel one forward
+        digitalWrite(DIR1, HIGH);
+        digitalWrite(HALT1, HIGH);
+        digitalWrite(ENCODERE1, HIGH);
+        analogWrite(MOTOR1, outpwm1);
+        
+    }else if(packetBuffer[0] == 'a'){ //Wheel one reverse
+        digitalWrite(DIR1, LOW);
+        digitalWrite(HALT1, HIGH);
+        digitalWrite(ENCODERE1, HIGH);
+        analogWrite(MOTOR1, outpwm1);
+    }else{
+        digitalWrite(HALT1, LOW); //stop wheel one
+        digitalWrite(ENCODERE1, LOW);
+        analogWrite(MOTOR1, LOW);
+    }
+    if(packetBuffer[5] == 'B'){ //Wheel TWO forward
+        digitalWrite(DIR2, HIGH);
+        digitalWrite(HALT2, HIGH);
+        digitalWrite(ENCODERE2, HIGH);
+        analogWrite(MOTOR2, outpwm2);
+    }else if(packetBuffer[5] == 'b'){ //Wheel TWO reverse
+        digitalWrite(DIR2, LOW);
+        digitalWrite(HALT2, HIGH);
+        digitalWrite(ENCODERE2, HIGH);
+        analogWrite(MOTOR2, outpwm2);
+    }else{                               //stop wheel TWO
+        digitalWrite(HALT2, LOW); 
+        digitalWrite(ENCODERE2, LOW);
+        analogWrite(MOTOR2, LOW);
+    }
+        if(packetBuffer[10] == 'C'){ //Wheel three forward
+        digitalWrite(DIR3, HIGH);
+        digitalWrite(HALT3, HIGH);
+        digitalWrite(ENCODERE3, HIGH);
+        analogWrite(MOTOR3, outpwm3);
+    }else if(packetBuffer[10] == 'c'){ //Wheel three reverse
+        digitalWrite(DIR3, LOW);
+        digitalWrite(HALT3, HIGH);
+        digitalWrite(ENCODERE3, HIGH);
+        analogWrite(MOTOR3, outpwm3);
+    }else{
+        digitalWrite(HALT3, LOW); //stop wheel three
+        digitalWrite(ENCODERE3, LOW);
+        analogWrite(MOTOR3, LOW);
+    }
   }
 }
 
@@ -146,6 +234,44 @@ void printWiFiStatus() {
   Serial.print(rssi);
   Serial.println(" dBm");
 }
+
+//Counters for encoders
+void counter1() {  
+  count1 += 1;
+  Serial.println(count1);
+}
+void counter2() {
+  count2 += 1;
+  Serial.println(count2);
+}
+void counter3() {
+  count3 += 1;
+  Serial.println(count3);
+}
+
+void checkspeed(){
+  //Add code to counter compared to expected(based on pwm value)
+  
+  count1 = 0;
+  count2 = 0;
+  count3 = 0;
+  Serial.println(count1);
+  Serial.println(count2);
+  Serial.println(count3);
+
+  digitalWrite(TEST, HIGH);
+  battery = analogRead(A0);
+  batterylevel = battery * (5/1024.0);
+  Serial.println(batterylevel);
+  if(batterylevel < 2.5)
+    ReplyBuffer[-1] = '1';
+  else
+    ReplyBuffer[-1] = '0';
+  
+  
+}
+
+
 
 
 
