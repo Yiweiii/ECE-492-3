@@ -1,32 +1,26 @@
-class Robot:
-	robotCount = 0
-
-	def __init__(self, x,y,x1,y1,angle):
-		self.x = x
-		self.y = y
-		self.idnum = Robot.robotCount
-		self.claw = self.claw(x1,y1,angle)
-		Robot.robotCount += 1
-
-	def displayCount(self):
-		print "Total robot count %d" % Robot.robotCount
+class Robot:	
+	def __init__(self, ID):
+		self.xpos = 0
+		self.ypos = 0
+		self.dir = 0
+		self.ID = ID			
 
 	def displayRobot(self):
-		print "Robot #: ",self.idnum, ", x: ", self.x, ", y: ", self.y
+		print "Robot #: ",self.ID, ", x: ", self.xpos, ", y: ", self.ypos, ", dir: ", self.dir
 
-	def setPosition(self,x,y):
-		self.x = x
-		self.y = y
+	def getX(self):
+		return self.xpos
+	
+	def getY(self):
+		return self.ypos
 		
-	class claw:
-		def __init__(self, x,y,angle):
-			self.x = x
-			self.y = y
-			self.orientation = angle
-			
-		def displayClaw(self):
-			print "x: ", self.x, ", y: ", self.y
-			
-		def setPosition(self,x,y):
-			self.x = x
-			self.y = y
+	def getDir(self):
+		return self.dir
+		
+	def getPosXY(self):
+		return (self.xpos,self.ypos)
+	
+	def setPos(self, xpos, ypos, dir):
+		self.xpos = xpos
+		self.ypos = ypos
+		self.dir = dir
