@@ -70,7 +70,7 @@ void MasonBot::moveRotateCCW(){
 	_robo_move(0,0,1);  //rotate CCW
 }
 void MasonBot::moveStop(){
-	_robo_move(0,0,0);  //stop
+	_stop_all_motors();  //stop
 }
 
 void MasonBot::_robo_move(int x, int y, int w){
