@@ -40,21 +40,21 @@ void MasonBot::_stop_all_motors() {
 }
 
 void MasonBot::_M1Dirset(double dir){
-	if (dir > 0)
+	if (dir < 0)
 		digitalWrite(_motor1_dir, HIGH);
 	else
 		digitalWrite(_motor1_dir, LOW);
 }
 	
 void MasonBot::_M2Dirset(double dir){
-	if (dir > 0)
+	if (dir < 0)
 		digitalWrite(_motor2_dir, HIGH);
 	else
 		digitalWrite(_motor2_dir, LOW);
 }	 
 
 void MasonBot::_M3Dirset(double dir){
-	if (dir > 0)
+	if (dir < 0)
 		digitalWrite(_motor3_dir, HIGH);
 	else
 		digitalWrite(_motor3_dir, LOW);
