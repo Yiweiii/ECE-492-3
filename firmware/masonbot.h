@@ -40,7 +40,7 @@
 #define _ir_read_3 18
 
 /* Battery check pins */
-#define _battery_read 0 // Analog in header?
+#define _battery_read A0 // Analog in header?
 #define _battery_en_check 47
 
 
