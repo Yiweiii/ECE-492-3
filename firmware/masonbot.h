@@ -15,17 +15,17 @@
  */
 
 /* Motor pins */
-#define _motor1_pwm 44
-#define _motor1_dir 22
-#define _motor1_halt 23
+#define _motor1_pwm 2
+#define _motor1_dir 25
+#define _motor1_halt 22
 
-#define _motor2_pwm 45
-#define _motor2_dir 24
-#define _motor2_halt 25
+#define _motor2_pwm 3
+#define _motor2_dir 26
+#define _motor2_halt 23
 
-#define _motor3_pwm 46
-#define _motor3_dir 26
-#define _motor3_halt 27
+#define _motor3_pwm 5
+#define _motor3_dir 27
+#define _motor3_halt 24
 
 /* IR light gate pins
  *
@@ -58,6 +58,7 @@ class MasonBot {
 		int getBatteryPower();
 		void moveForward();
 		void moveRotateCCW();
+		void moveRotateCW();
 		void moveStop();
 
 
@@ -65,6 +66,9 @@ class MasonBot {
 
 	private:
 		void _stop_all_motors();
+		void _M1Dirset(double dir);
+		void _M2Dirset(double dir);
+		void _M3Dirset(double dir);
 		void _motor1(int speed);
 		void _motor2(int speed);
 		void _motor3(int speed);
