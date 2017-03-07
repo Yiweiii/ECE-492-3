@@ -23,7 +23,7 @@ MasonBot::MasonBot() {
 	_stop_all_motors();
 }
 
-MasonBot::_stop_all_motors() {
+void MasonBot::_stop_all_motors() {
 	// Stopping motors requires HALT low...
 	// and PWM and DIR high.
 	digitalWrite(_motor1_halt, LOW);
@@ -39,15 +39,15 @@ MasonBot::_stop_all_motors() {
 	digitalWrite(_motor3_dir, HIGH);
 }
 
-MasonBot::_motor1(int speed) {
+void MasonBot::_motor1(int speed) {
 	analogWrite(_motor1_pwm, speed);
 }
 
-MasonBot::_motor2(int speed) {
+void MasonBot::_motor2(int speed) {
 	analogWrite(_motor2_pwm, speed);
 }
 
-MasonBot::_motor3(int speed) {
+void MasonBot::_motor3(int speed) {
 	analogWrite(_motor3_pwm, speed);
 }
 
@@ -61,4 +61,49 @@ int MasonBot::_read_battery() {
 int MasonBot::getBatteryPower() {
 	// Not sure if this is right....
 	return _read_battery();
+}
+
+void MasonBot::moveForward()  {
+	_robo_move(1,0,0);  //move forward
+}
+void MasonBot::moveRotateCCW(){
+	_robo_move(0,0,1);  //rotate CCW
+}
+void MasonBot::moveStop(){
+	_robo_move(0,0,0);  //stop
+}
+
+void MasonBot::_robo_move(int x, int y, int w){
+	//matrix equation to calc. forces for each of the motors of the holonomic robot
+	double f1 = (0.58*x) - (0.33*y) + (0.33*w);
+	double f2 = (-0.58*x) - (0.33*y) + (0.33*w);
+	double f3 = (0*x) + (0.67*y) + (0.33*w);
+	
+	double f1t = abs(f1);
+	double f2t = abs(f2);
+	double f3t = abs(f3);
+	double f_max = 0;
+	double f_max_ard = 0;	
+
+
+  if ((f1t>f2t) & (f1t>f3t))
+	f_max = f1t;
+  else if(f2t>f3t)
+	f_max = f2t;
+  else 
+	f3t;
+
+	if (f_max != 0)				//if max force is non-zero
+		f_max_ard = 255/f_max;
+	else				        //if max force is 0 (i.e STOP)
+		f_max_ard = 0;
+	
+	int dc1_ard = int(f1t*f_max_ard);	//normalized duty-cycle1
+	int dc2_ard = int(f2t*f_max_ard);	//normalized duty-cycle2
+	int dc3_ard = int(f3t*f_max_ard);	//normalized duty-cycle3
+	
+	_motor1(dc1_ard);
+	_motor2(dc2_ard);
+	_motor3(dc3_ard);
+	
 }
