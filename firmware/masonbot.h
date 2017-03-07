@@ -56,11 +56,19 @@ class MasonBot {
 		// Motor control
 		//
 		int getBatteryPower();
+		void moveForward();
+		void moveRotateCCW();
+		void moveStop();
+
+
+
+
 	private:
-		_stop_all_motors();
-		_motor1(int speed);
-		_motor2(int speed);
-		_motor3(int speed);
-		_read_battery();
+		void _stop_all_motors();
+		void _motor1(int speed);
+		void _motor2(int speed);
+		void _motor3(int speed);
+		int _read_battery();
+		void _robo_move(int x, int y, int w);
 };
 #endif
