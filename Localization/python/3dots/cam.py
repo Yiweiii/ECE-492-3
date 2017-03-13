@@ -4,7 +4,7 @@ from implementation import*
 import camera_actions as ca
 
 # Get video feed from overhead camera
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 # width and height of image frame
 height = 480
