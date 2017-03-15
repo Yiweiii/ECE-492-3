@@ -4,7 +4,7 @@ from implementation import*
 import camera_actions as ca
 
 # Get video feed from overhead camera
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 # width and height of image frame
 height = 480
@@ -40,16 +40,16 @@ while(True):
    #ca.acquire_locations(frame, blue_Rover)
    #ca.acquire_locations(frame, yellow_Rover)
    
-   Goal = (8,6)
+   #Goal = (8,6)
    
-   red_rover_path, red_rover_cost = dijkstra_search(Map,red_Rover.getPosXY(),Goal)
-   draw_grid(Map, width=3, path=reconstruct_path(red_rover_path, start=red_Rover.getPosXY(),goal=Goal))
-   print "\n"
+   #red_rover_path, red_rover_cost = dijkstra_search(Map,red_Rover.getPosXY(),Goal)
+   #draw_grid(Map, width=3, path=reconstruct_path(red_rover_path, start=red_Rover.getPosXY(),goal=Goal))
+   #print "\n"
    
-   Goals = [(8,6), (0,10), (2,4)]
-   red_rover_path2, index = ca.path_finding(Map,red_Rover,Goals)
-   draw_grid(Map, width=3, path=reconstruct_path(red_rover_path2, start=red_Rover.getPosXY(),goal=Goals[index]))
-   print "\n"
+   #Goals = [(8,6), (0,10), (2,4)]
+   #red_rover_path2, index = ca.path_finding(Map,red_Rover,Goals)
+   #draw_grid(Map, width=3, path=reconstruct_path(red_rover_path2, start=red_Rover.getPosXY(),goal=Goals[index]))
+  # print "\n"
    
    if cv2.waitKey(1) & 0xFF == ord('q'):
       break

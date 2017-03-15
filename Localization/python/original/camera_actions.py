@@ -56,4 +56,3 @@ def path_finding(Map, robot, goals):
 		path[i] = temp_path
 	min = cost.min()
 	return path[cost.argmin()], cost.argmin()
-		

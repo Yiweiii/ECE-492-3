@@ -54,7 +54,7 @@ def ID_hue_image(img, ID, orig):
 	hue_image = cv2.GaussianBlur(mask, (9,9), 2, 2)
 	
 	output = cv2.bitwise_and(orig,orig, mask=mask)
-	cv2.imshow("out",output)
+	#cv2.imshow("out",output)
 	#cv2.waitKey(0)
 	return hue_image
 	
@@ -82,7 +82,7 @@ def main():
 		cap = cv2.VideoCapture(0)
 		while(True):
 			ret, bgr_image = cap.read()
-			cv2.imshow("cam_image", bgr_image)
+			#cv2.imshow("cam_image", bgr_image)
 			#width, height = frame.shape
 
 			orig_image = bgr_image.copy()

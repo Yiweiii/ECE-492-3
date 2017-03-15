@@ -3,11 +3,12 @@ import cmath
 import math
 from robot_structure import Robot
 
-timestamp = .01 # Timestamp will be removed, using for testing, will be based on robot speed.
+timestamp = 0.005 # Timestamp will be removed, using for testing, will be based on robot speed.
 
 def rendezvous(robot1, robot2, robot3):
     dist1 = 0  # set to zer0 or small value for rendevous
     dist2 = 0  # set to zer0 or small value for rendevous
+    print "Robot 1: x:%d y:%d dir:%d " % (robot1.xpos, robot1.ypos, robot1.dir)
 
     x1 = robot1.xpos
     x2 = robot2.xpos
@@ -38,14 +39,16 @@ def rendezvous(robot1, robot2, robot3):
     (mag, phase) = cmath.polar((complex(xx,yy)))
 
     phasedeg = phase * 180 / cmath.pi - 180
+    phasedeg = int((phasedeg + 360 +180) % 360)
 
     rotateangle = angle - phasedeg
-
+    xgoal = - int(xx)
+    ygoal = -int(yy)
 
     #print("Move dist", mag)
     #print("angle to move to ", rotateangle)
     ### we will be moving to a set X, Y location and rotating untill a certain angle We may want to return X,Y angle.
-    return xx, yy, phasedeg
+    return xgoal,ygoal, phasedeg
 
 
 
