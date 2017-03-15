@@ -11,19 +11,18 @@ robot4 = Robot(4)
 
 ## SET ROBOT Values  --This will be from the camera function
 
-robot1.setPos(1, 0, 0)
-robot2.setPos(1, 99, 1)
-robot3.setPos(24, 22, 0)
-robot4.setPos(1, 2, 3)
+robot1.setPos(10, 10, 90)
+robot2.setPos(0, 0, 0)
+robot3.setPos(0, 0, 0)
+robot4.setPos(0, 0, 0)
 
 ##Direction outputs
 
-while true:
+while True:
     (mag1, angle1, rangle1) = rendezvous(robot1, robot2, robot3)
     (mag2, angle2, rangle2) = rendezvous(robot2, robot1, robot4)
-    (mag3, angle3, rangle3) = rendezvous(robot3, robot1, robot4)
-    (mag4, angle4, rangle4) = rendezvous(robot4, robot2, robot3)
-
+    (mag3, angle3, rangle3) = rendezvous(robot3, robot4, robot1)
+    (mag4, angle4, rangle4) = rendezvous(robot4, robot3, robot2)
 
     #This will be done by camera function
     robot1.setPos(robot1.xpos + mag1 * math.cos(angle1), robot1.ypos + mag1 * math.sin(angle1), angle1)
