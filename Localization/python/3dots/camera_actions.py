@@ -54,13 +54,13 @@ def ID_hue_image(img, ID, orig):
 	hue_image = cv2.GaussianBlur(mask, (9,9), 2, 2)
 	
 	output = cv2.bitwise_and(orig,orig, mask=mask)
-	cv2.imshow("out",output)
+	#cv2.imshow("out",output)
 	#cv2.waitKey(0)
 	return hue_image
 	
 def main():
 	if len(sys.argv) == 3:
-		print "File mode"
+		#print "File mode"
 		image_path = sys.argv[1]
 		bgr_image = cv2.imread(image_path)
 		
@@ -71,14 +71,14 @@ def main():
 		
 			
 		Robot1 = rs.Robot(int(sys.argv[2]))
-		print "Robot ID: %d" % (Robot1.ID)
+		#print "Robot ID: %d" % (Robot1.ID)
 		
 		hue_image = ID_hue_image(hsv_image, Robot1.ID, orig_image)
 				
 		track_robot(hue_image, orig_image, Robot1)
 		acquire_locations(hue_image, Robot1)
 	else:
-		print "Active mode"
+		#print "Active mode"
 		cap = cv2.VideoCapture(0)
 		while(True):
 			ret, bgr_image = cap.read()
@@ -95,18 +95,20 @@ def main():
 			#cv2.imshow("hsv", hsv_image)
 				
 			Robot1 = rs.Robot(3)
-			print "Robot ID: %d" % (Robot1.ID)
+			Robot2 = rs.Robot(2)
+			#print "Robot ID: %d" % (Robot1.ID)
 				
 			#lower_red_hue_range = cv2.inRange(hsv_image,cv2.cv.Scalar(0,100,100),cv2.cv.Scalar(10,255,255))
 			#upper_red_hue_range = cv2.inRange(hsv_image,cv2.cv.Scalar(160,100,100),cv2.cv.Scalar(180,255,255))
 			#red_hue_image = cv2.addWeighted(lower_red_hue_range,1.0,upper_red_hue_range,1.0,0.0)
 			
 			hue_image = ID_hue_image(hsv_image, Robot1.ID, orig_image)
+			hue_image2 = ID_hue_image(hsv_image, Robot2.ID, orig_image)
 					
 			#track_robot(hue_image, orig_image)
 			#cv2.imshow("hue",hue_image)
 			acquire_locations(hue_image, Robot1)
-			
+			acquire_locations(hue_image2, Robot2)
 			#time.sleep(1)
 			  
 			if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -122,12 +124,12 @@ def track_robot(img, orig_image, robot):
 	output = img.copy()
 	coordinates = [[0 for x in range(2)] for y in range(3)] 
 	if circles is not None:
-		print "Robot detected"
+		#print "Robot detected"
 		circles = np.round(circles[0,:]).astype("int")
 		i = 0
 		if len(circles) is 3:
 			for (x,y,r) in circles:
-				#print "Circle %d: %d y: %d r: %d" %(i,x,y,r)
+				##print "Circle %d: %d y: %d r: %d" %(i,x,y,r)
 				coordinates[i][0] = x
 				coordinates[i][1] = y
 				#cv2.circle(orig_image,(x,y),r,(0,255,0),4)
@@ -135,7 +137,7 @@ def track_robot(img, orig_image, robot):
 				i = i + 1
 			
 			Robotx, Roboty, Robotdir = thetacalc(coordinates[0], coordinates[1], coordinates[2])
-			print "Robot x: %d y: %d dir : %d" %(Robotx, Roboty, Robotdir)
+			#print "Robot x: %d y: %d dir : %d" %(Robotx, Roboty, Robotdir)
 			robot.setPos(Robotx,Roboty,Robotdir)
 		else:
 			print "Error occured"
@@ -150,55 +152,55 @@ def thetacalc(a, b, c):
 	t2 = (b[0],b[1])
 	t3 = (c[0],c[1])
 	t = [t1, t2, t3]
-	#print(t)
+	##print(t)
 	coord = [a, b, c]
 	a_b = math.sqrt((a[0]-b[0])**2 + (a[1] - b[1])**2)
 	a_c = math.sqrt((a[0]-c[0])**2 + (a[1] - c[1])**2)
 	b_c = math.sqrt((b[0]-c[0])**2 + (b[1] - c[1])**2)
 	values = [a_b, a_c, b_c]
-	#print(values)
+	##print(values)
 	min_index, min_value = min(enumerate(values), key=operator.itemgetter(1))
 	if min_index is 0:
-		#print ("a_b")
+		##print ("a_b")
 		x = (coord[0][0] + coord[1][0])/2
 		y = (coord[0][1] + coord[1][1])/2
 		x1 = (x,y)
 		x2 = (coord[2][0],coord[2][1])
 		x3 = (x2[0], y)
-		#print (x1)
-		#print (x2)
-		#print (x3)
+		##print (x1)
+		##print (x2)
+		##print (x3)
 		dis_x = x3[0] - x1[0]
 		dis_y = x3[1] - x2[1]
 	elif min_index is 1:
-		#print("a_c")
+		##print("a_c")
 		x = (coord[0][0] + coord[2][0])/2
 		y = (coord[0][1] + coord[2][1])/2
 		x1 = (x,y)
 		x2 = (coord[1][0],coord[1][1])
 		x3 = (x2[0], y)
-		#print (x1)
-		#print (x2)
-		#print (x3)
+		##print (x1)
+		##print (x2)
+		##print (x3)
 		dis_x = x3[0] - x1[0]
 		dis_y = x3[1] - x2[1]
 	else:
-		#print("b_c")
+		##print("b_c")
 		x = (coord[1][0] + coord[2][0])/2
 		y = (coord[1][1] + coord[2][1])/2
 		x1 = (x,y)
 		x2 = (coord[0][0],coord[0][1])
 		x3 = (x2[0], y)
-		#print (x1)
-		#print (x2)
-		#print (x3)
+		##print (x1)
+		##print (x2)
+		##print (x3)
 		dis_x = x3[0] - x1[0]
 		dis_y = x3[1] - x2[1]
 	
-	#print "disy : %d disx : %d" % (dis_y, dis_x)
+	##print "disy : %d disx : %d" % (dis_y, dis_x)
 	dir = (math.atan2(dis_y,dis_x) * 180/3.14159)
 	degrees = (dir + 360) % 360
-	#print "dir %d" %dir
+	##print "dir %d" %dir
 	return x, y, degrees
 	
 	
@@ -206,7 +208,7 @@ def thetacalc(a, b, c):
 def acquire_locations(img, robot):
 	coordinates = [[0 for x in range(2)] for y in range(3)] 
 	cnts = cv2.findContours(img.copy(),cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)[-2]
-	print len(cnts)
+	#print len(cnts)
 	if len(cnts) is 3:
 		#c = max(cnts,key=cv2.contourArea)
 		for i in range(0, 3):

@@ -3,7 +3,7 @@ import cmath
 import math
 from robot_structure import Robot
 
-timestamp = .1 # Timestamp will be removed, using for testing, will be based on robot speed.
+timestamp = 1 # Timestamp will be removed, using for testing, will be based on robot speed.
 
 def rendezvous(robot1, robot2, robot3):
     dist1 = 0  # set to zer0 or small value for rendevous
@@ -22,8 +22,22 @@ def rendezvous(robot1, robot2, robot3):
     ya = y1 - y2
     yb = y1 - y3
 
-    (maga, phasea) = cmath.polar((complex(xa, ya)))
-    (magb, phaseb) = cmath.polar((complex(xb, yb)))
+    maga = math.sqrt(xa*xa +ya*ya)
+    magb = math.sqrt(xb*xb +yb*yb)
+    phasemovea = math.atan2(ya,xa)
+    phasemoveb = math.atan2(yb,xb)
+    if ya > 0:
+        phasea = math.atan2(-ya, -xa)
+    else:
+        phasea = math.atan2(-ya, xa)
+    if yb > 0:
+        phaseb = math.atan2(-yb, -xb)
+    else:
+        phaseb = math.atan2(-yb, xb)		
+	#phasea = math.atan2(ya, xa)
+    #phaseb = math.atan2(yb, xb)
+	#(maga, phasea) = cmath.polar((complex(xa, ya)))
+    #(magb, phaseb) = cmath.polar((complex(xb, yb)))
     #print(maga, " mag ", magb)
 
     movea = timestamp * (maga - dist1)
@@ -32,17 +46,23 @@ def rendezvous(robot1, robot2, robot3):
     #print("moveb", moveb)
 
 
-    xx = (movea * math.cos(phasea) + moveb * math.cos(phaseb))
-    yy = (movea * math.sin(phasea) + moveb * math.sin(phaseb))
-    print(xx, yy)
+    xx = (movea * math.cos(phasemovea) + moveb * math.cos(phasemoveb))
+    yy = (movea * math.sin(phasemovea) + moveb * math.sin(phasemoveb))
+    #print(xx, yy)
     finalx = robot1.xpos - xx
     finaly = robot1.ypos - yy
-    print(finalx,finaly)
+    #print(finalx,finaly)
 
-    (mag, phase) = cmath.polar((complex(xx,yy)))
+    #(mag, phase) = cmath.polar((complex(xx,yy)))
 
-    phasedeg = phase * 180 / cmath.pi - 180
-    phasedeg = (phasedeg +360)
+    #phase = math.atan2(yy,xx)
+
+    if yy > 0:
+        phase = math.atan2(-yy, -xx)
+    else:
+        phase = math.atan2(-yy, xx)	
+    phasedeg = (phase * (180 / cmath.pi) )
+    phasedeg = (phasedeg + 360)%360
     rotateangle = angle - phasedeg
 
 

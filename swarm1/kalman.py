@@ -3,29 +3,29 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random
 
-X_estimate = np.asmatrix(np.zeros((1,4)))
-X_predict = np.asmatrix(np.zeros((1,4)))
-A = np.mat([[1,1,0,0],[0,1,0,0],[0,0,1,1],[0,0,0,1]])
-H = np.mat([[1,0,0,0],[0,0,1,0]])
-I = np.mat([[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]])
-R = np.mat([[10000,0],[0,10000]])
-P_estimate = np.mat([[10000,5000,0,0],[5000,5000,0,0],[0,0,10000,5000],[0,0,5000,5000]])
-P_predict = np.asmatrix(np.zeros((4,4)))
-new_sample = np.mat([[0],[0]])
-kg = np.asmatrix(np.zeros((4,2)))
-x = []
-y = []
-x_cor = []
-y_cor = []
-count = 0
+# X_estimate = np.asmatrix(np.zeros((1,4)))
+# X_predict = np.asmatrix(np.zeros((1,4)))
+# A = np.mat([[1,1,0,0],[0,1,0,0],[0,0,1,1],[0,0,0,1]])
+# H = np.mat([[1,0,0,0],[0,0,1,0]])
+# I = np.mat([[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]])
+# R = np.mat([[10000,0],[0,10000]])
+# P_estimate = np.mat([[10000,5000,0,0],[5000,5000,0,0],[0,0,10000,5000],[0,0,5000,5000]])
+# P_predict = np.asmatrix(np.zeros((4,4)))
+# new_sample = np.mat([[0],[0]])
+# kg = np.asmatrix(np.zeros((4,2)))
+# x = []
+# y = []
+# x_cor = []
+# y_cor = []
+# count = 0
 
-#X_predict = np.mat([[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]])
-#P_estimate = np.mat([[1,1,0,0],[1,1,0,0],[1,1,0,0],[1,1,0,0]])
-#X_estimate[k-2,:] = X_est;
-#u[k-2] = u1;
-k = 2
-i = 0
-coeff = 0.8
+# #X_predict = np.mat([[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]])
+# #P_estimate = np.mat([[1,1,0,0],[1,1,0,0],[1,1,0,0],[1,1,0,0]])
+# #X_estimate[k-2,:] = X_est;
+# #u[k-2] = u1;
+# k = 2
+# i = 0
+# coeff = 0.8
 	
 
 def kal_predict():
@@ -72,9 +72,11 @@ def kalman(x,y):
 	
 	x_cor = X_estimate[0,0]
 	y_cor = X_estimate[0,2]
+	
+	return x_cor, y_cor
 
-plt.figure(1)
-plt.plot(x,y)
-plt.plot(x_cor,y_cor)
-plt.show()
+#plt.figure(1)
+#plt.plot(x,y)
+#plt.plot(x_cor,y_cor)
+#plt.show()
 
