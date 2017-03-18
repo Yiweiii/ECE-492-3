@@ -42,19 +42,21 @@ int keyIndex = 1;            // your network key Index number (needed only for W
 unsigned int localPort = 2390;      // local port to listen on
 
 char packetBuffer[255]; //buffer to hold incoming packet
-char  ReplyBuffer[] = "acknowledged";       // a string to send back
+
+char  ReplyBuffer[] = "ACK0";       // a string to send back
 int microseconds = 50000;
 
 
 WiFiUDP Udp;
 
 void setup() {
-  
+      MasonBot();
+    MasonBot().moveStop();
+    
 WiFi.setPins(41,45,47,43); //47 CS, 45 en, 43 irq, 41 rst
   //Initialize serial and wait for port to open:
   Serial.begin(9600);
-    MasonBot();
-    MasonBot().moveStop();
+
 
 //  attachInterrupt(digitalPinToInterrupt(_ir_en_1), counter1, FALLING);
 //  attachInterrupt(digitalPinToInterrupt(_ir_en_2), counter2, FALLING);
@@ -118,10 +120,16 @@ void loop() {
     
   if(packetBuffer[0] == 'A'){
         MasonBot().moveRotateCW();
+        packetBuffer[0] = ' ';
   }else if(packetBuffer[0] == 'a'){
+        MasonBot().moveCCW();
+         packetBuffer[0] = ' ';
+  }else if(packetBuffer[0] == 'f'){
         MasonBot().moveForward();
-  }else{
+         packetBuffer[0] = ' ';         
+  }else if(packetBuffer[0] == 's'){
         MasonBot().moveStop();
+         packetBuffer[0] = ' ';
   }
 }
 
