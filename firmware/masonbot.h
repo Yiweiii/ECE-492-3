@@ -10,7 +10,7 @@
 
 #include "Arduino.h"
 
-/* Pinout definitions
+/* Pinout definitionsl
  * The following correspond to pins on the Arduino Mega board.
  */
 

@@ -61,22 +61,22 @@ void MasonBot::_M3Dirset(double dir){
 }	 
  
 	
-void MasonBot::_motor1(int speed) {
+void MasonBot::_motor1(int speed1) {
 	digitalWrite(_motor1_halt, HIGH);
-	analogWrite(_motor1_pwm, speed);
-	Serial.println(speed);
+	analogWrite(_motor1_pwm, speed1);
+	//Serial.println(speed);
 }
 
-void MasonBot::_motor2(int speed) {
+void MasonBot::_motor2(int speed2) {
 	digitalWrite(_motor2_halt, HIGH);
-	analogWrite(_motor2_pwm, speed);
-Serial.println(speed);
+	analogWrite(_motor2_pwm, speed2);
+	//Serial.println(speed);
 }
 
-void MasonBot::_motor3(int speed) {
+void MasonBot::_motor3(int speed3) {
 	digitalWrite(_motor3_halt, HIGH);
-	analogWrite(_motor3_pwm, speed);
-Serial.println(speed);
+	analogWrite(_motor3_pwm, speed3);
+//Serial.println(speed);
 }
 
 int MasonBot::_read_battery() {
@@ -127,7 +127,7 @@ void MasonBot::_robo_move(int x, int y, int w){
 	f_max = f3t;
 
 	if (f_max != 0)				//if max force is non-zero
-		f_max_ard = 255/f_max;
+		f_max_ard = 200/f_max;
 	else				        //if max force is 0 (i.e STOP)
 		f_max_ard = 0;
 	
