@@ -67,20 +67,27 @@ while True:
     print "angle 1: %d" % angle1
     print "xpos1 : %d " % xpos1
     if (robot1.dir < lower_range or robot1.dir > upper_range) and (count == 1):  ## rotate untill rotate is good
-        MESSAGE = "A"
-        ##angle1 = angle1 + 10;
+        if rotcount == 1:
+		a = (robot1.dir - angle1 + 360 ) % 360
+		b = (angle1 - robot1.dir + 360 ) % 360
+		if a > b:
+			MESSAGE = 'a'
+		else:
+			MESSAGE = 'A'
+		rotcount = 2
+        
         print "Robot 1: x:%d y:%d dir:%d " % (robot1.xpos, robot1.ypos, robot1.dir)
     elif robot1.xpos < xpos_lower_range or robot1.xpos > xpos_upper_range: ## Move untill xpos is good
-        if count == 1:
+        if fwdcount == 1:
 	        MESSAGE = 's'
-	        count = count + 1
+	        fwdcount = fwdcount + 1
         else:
-	        MESSAGE = 'a'
-       #xpos1 = xpos1 + 1;
+	        MESSAGE = 'f'
     else:
         MESSAGE = 'stop'
         (xpos1, ypos1, angle1) = rendezvous(robot1, robot2, robot3)
-        count = 1
+        fwdcount = 1
+	rotcount = 1
 
     ##MESSAGE = raw_input('>')
     #print "send message: ", MESSAGE
