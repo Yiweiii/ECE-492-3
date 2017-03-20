@@ -314,23 +314,23 @@ def acquire_locations(img, robot, q):
 		#Robotdir = abs(math.atan(Robotk) * 180 / 3.14159)
 		
 		Robotx, Roboty, Robotdir = thetacalc(coordinates[0], coordinates[1], coordinates[2])
-		#x_final = Robotx
-		#y_final = Roboty
-		print "Without Kalman x:%d y:%d" % (Robotx, Roboty)
-		x_array1.append(Robotx)
-		y_array1.append(Roboty)
+		x_final = Robotx
+		y_final = Roboty
+		#print "Without Kalman x:%d y:%d" % (Robotx, Roboty)
+		#x_array1.append(Robotx)
+		#y_array1.append(Roboty)
 		
-		x_final, y_final = kalman(Robotx, Roboty)
+		#x_final, y_final = kalman(Robotx, Roboty)
 		
-		x_array2.append(x_final)
-		y_array2.append(y_final)
+		#x_array2.append(x_final)
+		#y_array2.append(y_final)
 		
-		if q == 200:
-			print "Here plotting"
-			plt.figure(1)
-			plt.plot(x_array2,y_array2)
-			plt.plot(x_array1,y_array1)
-			plt.show()
+		#if q == 200:
+			#print "Here plotting"
+			#plt.figure(1)
+			#plt.plot(x_array2,y_array2)
+			#plt.plot(x_array1,y_array1)
+			#plt.show()
 	
 		robot.setPos(x_final,y_final,Robotdir)
 		print "Robot x: %d y: %d dir : %d" %(robot.xpos, robot.ypos, robot.dir)
