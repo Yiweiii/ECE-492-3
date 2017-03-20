@@ -8,7 +8,7 @@ import operator
 import time
 
 red_lower = np.array([0,100,100])
-red_upper = np.array([10,255,255])
+red_upper = np.array([70,255,255])
 
 #red_lower = np.array([150,100,100])
 #red_upper = np.array([179,255,255])
@@ -94,8 +94,8 @@ def main():
 			#cv2.imshow("bgr", bgr_image)
 			#cv2.imshow("hsv", hsv_image)
 				
-			Robot1 = rs.Robot(3)
-			Robot2 = rs.Robot(2)
+			Robot1 = rs.Robot(1)
+			#Robot2 = rs.Robot(2)
 			#print "Robot ID: %d" % (Robot1.ID)
 				
 			#lower_red_hue_range = cv2.inRange(hsv_image,cv2.cv.Scalar(0,100,100),cv2.cv.Scalar(10,255,255))
@@ -103,12 +103,12 @@ def main():
 			#red_hue_image = cv2.addWeighted(lower_red_hue_range,1.0,upper_red_hue_range,1.0,0.0)
 			
 			hue_image = ID_hue_image(hsv_image, Robot1.ID, orig_image)
-			hue_image2 = ID_hue_image(hsv_image, Robot2.ID, orig_image)
+			#hue_image2 = ID_hue_image(hsv_image, Robot2.ID, orig_image)
 					
-			#track_robot(hue_image, orig_image)
+			track_robot(hue_image, orig_image, Robot1)
 			#cv2.imshow("hue",hue_image)
 			acquire_locations(hue_image, Robot1)
-			acquire_locations(hue_image2, Robot2)
+			#acquire_locations(hue_image2, Robot2)
 			#time.sleep(1)
 			  
 			if cv2.waitKey(1) & 0xFF == ord('q'):

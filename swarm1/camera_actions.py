@@ -7,11 +7,11 @@ import sys
 import math
 import operator
 import time
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import random
 
 red_lower = np.array([0,100,100])
-red_upper = np.array([10,255,255])
+red_upper = np.array([80,255,255])
 
 #red_lower = np.array([150,100,100])
 #red_upper = np.array([179,255,255])
@@ -169,8 +169,8 @@ def main():
 		cap = cv2.VideoCapture(0)
 		while(True):
 			ret, bgr_image = cap.read()
-			print(i)
-			i = i + 1
+			#print(q)
+			#q = q + 1
 			cv2.imshow("cam_image", bgr_image)
 			#width, height = frame.shape
 
@@ -184,7 +184,7 @@ def main():
 			#cv2.imshow("hsv", hsv_image)
 				
 			#Robot1 = rs.Robot(3)
-			Robot2 = rs.Robot(2)
+			Robot2 = rs.Robot(1)
 			#print "Robot ID: %d" % (Robot1.ID)
 				
 			#lower_red_hue_range = cv2.inRange(hsv_image,cv2.cv.Scalar(0,100,100),cv2.cv.Scalar(10,255,255))

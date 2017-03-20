@@ -3,7 +3,7 @@ import cmath
 import math
 from robot_structure import Robot
 
-timestamp = .1 #Controls step size 
+timestamp = .5 #Controls step size 
 
 def rendezvous(robot1, robot2, robot3):
     dist1 = 0  # set to zer0 or small value for rendevous
@@ -33,19 +33,20 @@ def rendezvous(robot1, robot2, robot3):
     #print("moveb", moveb)
 
 
-    xx = (movea * math.cos(phasea) + moveb * math.cos(phaseb))
-    yy = (movea * math.sin(phasea) + moveb * math.sin(phaseb))
+    xx = -(movea * math.cos(phasea) + moveb * math.cos(phaseb))
+    yy = -(movea * math.sin(phasea) + moveb * math.sin(phaseb))
 
 
-    print(xx, yy)
+    #print(xx, yy)
     finalx = robot1.xpos - xx
     finaly = robot1.ypos - yy
 
     ##(mag, phase) = cmath.polar((complex(xx,yy)))
-
+    
     phase = math.atan2(xx,-yy)
 
     phasedeg = ((phase * 180 / cmath.pi) + 360 )% 360
+    print(phasedeg)
 
 
     ##rotateangle = angle - phasedeg
