@@ -143,9 +143,9 @@ def ID_hue_image(img, ID, orig):
 	#cv2.waitKey(0)
 	return hue_image
 
-i = 0	
+q = 0	
 def main():
-	global i
+	global q
 	if len(sys.argv) == 3:
 		#print "File mode"
 		image_path = sys.argv[1]
@@ -197,7 +197,7 @@ def main():
 			#track_robot(hue_image, orig_image)
 			#cv2.imshow("hue",hue_image)
 			#acquire_locations(hue_image, Robot1)
-			acquire_locations(hue_image2, Robot2, i)
+			acquire_locations(hue_image2, Robot2)
 			#time.sleep(1)
 			if cv2.waitKey(1) & 0xFF == ord('q'):
 				break
@@ -293,7 +293,7 @@ def thetacalc(a, b, c):
 	
 	
 
-def acquire_locations(img, robot, q):
+def acquire_locations(img, robot):
 	coordinates = [[0 for x in range(2)] for y in range(3)] 
 	cnts = cv2.findContours(img.copy(),cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)[-2]
 	#print len(cnts)
@@ -334,9 +334,11 @@ def acquire_locations(img, robot, q):
 	
 		robot.setPos(x_final,y_final,Robotdir)
 		print "Robot x: %d y: %d dir : %d" %(robot.xpos, robot.ypos, robot.dir)
+		return True
 		
 	else:
 		print "Robot not in camera-view"
+		return False
 		
 
 def path_finding(Map, robot, goals):

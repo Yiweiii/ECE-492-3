@@ -31,6 +31,7 @@ udpSerSock = socket(AF_INET, SOCK_DGRAM)
 ##xpos1 = -10
 i = 0
 count = 1
+rotcount = 1
 MESSAGE = "q"
 currMESSAGE = "q"
 while True:
@@ -41,7 +42,7 @@ while True:
     hsv_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2HSV)
     hue_image = ca.ID_hue_image(hsv_image, robot1.ID, orig_image)
     hue_image2 = ca.ID_hue_image(hsv_image, robot2.ID, orig_image)
-    ca.acquire_locations(hue_image, robot1)
+    robot_in_view = ca.acquire_locations(hue_image, robot1)
     ca.acquire_locations(hue_image2, robot2)
     robot3.setPos(robot2.xpos, robot2.ypos, robot2.dir)
 	
@@ -95,7 +96,7 @@ while True:
 
    # print(currMESSAGE)
     #print(MESSAGE)
-    if MESSAGE != currMESSAGE:
+    if (MESSAGE != currMESSAGE) and robot_in_view:
         udpSerSock.sendto(MESSAGE, ADDR)
         print "send message: ", MESSAGE
         currMESSAGE = MESSAGE
