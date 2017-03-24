@@ -8,8 +8,9 @@ import cv2
 import time
 
 cap = cv2.VideoCapture(0)
-#fourcc = cv2.cv.CV_FOURCC(*'MJPG')
-video_writer = cv2.VideoWriter('output.avi', -1, 20.0, (640,480))
+
+#fourcc = cv2.cv.CV_FOURCC('X','V','I','D')
+video_writer = cv2.VideoWriter("output.avi", -1, 20, (640, 480))
 
 ##Create four robots
 robot1 = Robot(3)  # Blue
@@ -78,10 +79,9 @@ while True:
 
         if (robot1.dir < lower_range or robot1.dir > upper_range) and (count == 1):  ## rotate untill rotate is good
             if rotcount == 1:
-                a = (robot1.dir - angle1 + 360) % 360
-                b = (angle1 - robot1.dir + 360) % 360
+                a = (robot1.dir - angle1 +360 )% 360
                 rotcount = 2
-            if a < b:
+            if a < 180:
                 MESSAGE = 'A'
             else:
                 MESSAGE = 'a'
