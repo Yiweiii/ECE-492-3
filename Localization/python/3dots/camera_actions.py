@@ -272,15 +272,7 @@ def find_robot(hsv_image, orig_image,color1, color2, color3, robot):
 	
 	if found == False:
 		print "\nRobot not found"
-	#min_index, min_value = min(enumerate(final_perims), key=operator.itemgetter(1))
-	#X = (final_coordinates[min_index].x1,final_coordinates[min_index].x2, final_coordinates[min_index].x3)
-	#print (final_coordinates[min_index].get_perimeter())
-	#print(X)
 	
-
-
-	
-
 def track_robot(img, orig_image, robot):
 	circles = cv2.HoughCircles(img,cv2.cv.CV_HOUGH_GRADIENT,1,15,
 								param1=10,param2=20, minRadius=0,maxRadius=0)
@@ -323,8 +315,6 @@ def thetacalc_n(a,b,c):
 	dir = (math.atan2(dis_y,dis_x) * 180/3.14159)
 	degrees = (dir + 360) % 360
 	return final_x, final_y, degrees
-
-	
 	
 def thetacalc(a, b, c):
 	final_x = 0
