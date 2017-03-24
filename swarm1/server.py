@@ -8,8 +8,8 @@ import cv2
 import time
 
 cap = cv2.VideoCapture(0)
-fourcc = cv2.cv.CV_FOURCC(*'XVID')
-video_writer = cv2.VideoWriter("output.avi", fourcc, 20, (680, 480))
+#fourcc = cv2.cv.CV_FOURCC('X','V','I','D')
+video_writer = cv2.VideoWriter("output.avi", -1, 20, (640, 480))
 
 ##Create four robots
 robot1 = Robot(3)  # Blue
