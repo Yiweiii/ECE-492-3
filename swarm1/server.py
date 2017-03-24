@@ -8,8 +8,8 @@ import cv2
 import time
 
 cap = cv2.VideoCapture(0)
-fourcc = cv2.cv.CV_FOURCC(*'XVID')
-video_writer = cv2.VideoWriter("output.avi", fourcc, 20, (680, 480))
+#fourcc = cv2.cv.CV_FOURCC(*'MJPG')
+video_writer = cv2.VideoWriter('output.avi', -1, 20.0, (640,480))
 
 ##Create four robots
 robot1 = Robot(3)  # Blue
@@ -46,8 +46,7 @@ while True:
     robot_in_view = ca.acquire_locations(hue_image, robot1)
     ca.acquire_locations(hue_image2, robot2)
     robot3.setPos(robot2.xpos, robot2.ypos, robot2.dir)
-
-
+    video_writer.write(bgr_image)
 
     if robot_in_view:
 
@@ -56,7 +55,7 @@ while True:
         print "Robot 2 and 3 x:%d y:%d" % (robot2.xpos, robot2.ypos)
 
         (xpos1, ypos1, angle1) = rendezvous(robot1, robot2, robot3)
-        if i == 1000:
+        if i == 100:
             MESSAGE = 'stop'
             udpSerSock.sendto(MESSAGE, ADDR)
             cap.release()
@@ -135,7 +134,7 @@ while True:
         MESSAGE = "stop"
         udpSerSock.sendto(MESSAGE, ADDR)
         print "send message : ", MESSAGE
-        exit(0)
+        #exit(0)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 

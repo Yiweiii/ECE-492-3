@@ -7,20 +7,33 @@ import math
 import operator
 import time
 
-red_lower = np.array([0,100,100])
-red_upper = np.array([70,255,255])
+RED = 1
+GREEN = 2
+BLUE = 3
+YELLOW = 4
+ORANGE = 5
+VIOLET = 6
 
-#red_lower = np.array([150,100,100])
-#red_upper = np.array([179,255,255])
+#red_lower = np.array([0,100,100])
+#red_upper = np.array([50,255,255])
+
+red_lower = np.array([140,100,100])
+red_upper = np.array([179,255,255])
 
 green_lower = np.array([37,81,158])
 green_upper = np.array([83,119,247])
 
-blue_lower = np.array([70,100,255])
-blue_upper = np.array([140,255,255])
+#blue_lower = np.array([70,100,255])
+#blue_upper = np.array([140,255,255])
 
-yellow_lower = np.array([25,110,190])
-yellow_upper = np.array([90,255,255])
+blue_lower = np.array([110,100,100])
+blue_upper = np.array([130,255,255])
+
+#yellow_lower = np.array([25,110,190])
+#yellow_upper = np.array([90,255,255])
+
+yellow_lower = np.array([25,100,100])
+yellow_upper = np.array([60,255,255])
 
 violet_lower = np.array([120,60,95])
 violet_upper = np.array([150,255,255])
@@ -28,23 +41,38 @@ violet_upper = np.array([150,255,255])
 orange_lower = np.array([10, 100, 180])
 orange_upper = np.array([80,255,255])
 
+class triangle:
+	def __init__(self, x1, x2, x3):
+		self.x1 = x1
+		self.x2 = x2
+		self.x3 = x3
+		self.d1 = 1000
+		self.d2 = 1000
+		self.perimeter = 0
+
+	def get_perimeter(self):
+		return self.d1 + self.d2
+		
+def isLeft(a, b, c):
+	return ((b[0] - a[0])*(c[1] - a[1]) - (b[1] - a[1])*(c[0] - a[0])) > 0;
+
 def ID_hue_image(img, ID, orig):
-	if(ID is 1):
+	if(ID is RED):
 		lower = red_lower
 		upper = red_upper
-	elif(ID is 2):
+	elif(ID is GREEN):
 		lower = green_lower
 		upper = green_upper
-	elif(ID is 3):
+	elif(ID is BLUE):
 		lower = blue_lower
 		upper = blue_upper
-	elif(ID is 4):
+	elif(ID is YELLOW):
 		lower = yellow_lower
 		upper = yellow_upper
-	elif ID is 5:
+	elif ID is ORANGE:
 		lower = orange_lower
 		upper = orange_upper
-	elif ID is 6:
+	elif ID is VIOLET:
 		lower = violet_lower
 		upper = violet_upper
 	else:
@@ -60,7 +88,7 @@ def ID_hue_image(img, ID, orig):
 	
 def main():
 	if len(sys.argv) == 3:
-		#print "File mode"
+		print "File mode"
 		image_path = sys.argv[1]
 		bgr_image = cv2.imread(image_path)
 		
@@ -69,16 +97,26 @@ def main():
 		bgr_image = cv2.medianBlur(bgr_image, 3)
 		hsv_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2HSV)
 		
-			
 		Robot1 = rs.Robot(int(sys.argv[2]))
 		#print "Robot ID: %d" % (Robot1.ID)
 		
-		hue_image = ID_hue_image(hsv_image, Robot1.ID, orig_image)
-				
-		track_robot(hue_image, orig_image, Robot1)
-		acquire_locations(hue_image, Robot1)
+		#hue_image = ID_hue_image(hsv_image, Robot1.ID, orig_image)
+		find_robot(hsv_image,orig_image, RED,RED,RED, Robot1)
+		find_robot(hsv_image,orig_image, RED,BLUE,BLUE, Robot1)
+		find_robot(hsv_image,orig_image, YELLOW,BLUE,RED, Robot1)
+		find_robot(hsv_image,orig_image, RED,BLUE,YELLOW, Robot1)
+		find_robot(hsv_image,orig_image, BLUE,BLUE,BLUE, Robot1)
+		
+		# not found
+		find_robot(hsv_image,orig_image, YELLOW,YELLOW,BLUE, Robot1)
+		find_robot(hsv_image,orig_image, YELLOW,RED,BLUE, Robot1)
+		find_robot(hsv_image,orig_image, RED, BLUE, RED, Robot1)
+		find_robot(hsv_image,orig_image, RED, RED, BLUE, Robot1)
+
+		#track_robot(hue_image, orig_image, Robot1)
+		#acquire_locations(hue_image, Robot1)
 	else:
-		#print "Active mode"
+		print "Active mode"
 		cap = cv2.VideoCapture(0)
 		while(True):
 			ret, bgr_image = cap.read()
@@ -105,8 +143,8 @@ def main():
 			hue_image = ID_hue_image(hsv_image, Robot1.ID, orig_image)
 			#hue_image2 = ID_hue_image(hsv_image, Robot2.ID, orig_image)
 					
-			track_robot(hue_image, orig_image, Robot1)
-			#cv2.imshow("hue",hue_image)
+			#track_robot(hue_image, orig_image, Robot1)
+			cv2.imshow("hue",hue_image)
 			acquire_locations(hue_image, Robot1)
 			#acquire_locations(hue_image2, Robot2)
 			#time.sleep(1)
@@ -118,26 +156,152 @@ def main():
 		cv2.destroyAllWindows()
 
 
+def find_robot(hsv_image, orig_image,color1, color2, color3, robot):
+	found = False
+	hue_image_1 = ID_hue_image(hsv_image, color1, orig_image)
+	cnts = cv2.findContours(hue_image_1.copy(),cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)[-2]
+	points_array_1 = []
+	final_coordinates = []
+	for i in range(0, len(cnts)):
+		c = cnts[i]
+		M = cv2.moments(c)
+		a = int(M["m10"] / M["m00"])
+		b = int(M["m01"] / M["m00"])
+		points_array_1.append((a,b))
+		T = triangle((a,b),[0,0],[0,0])
+		final_coordinates.append(T)
+	#print (points_array_1)
+	hue_image_2 = ID_hue_image(hsv_image, color2, orig_image)
+	cnts = cv2.findContours(hue_image_2.copy(),cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)[-2]
+	points_array_2 = []
+	for i in range(0, len(cnts)):
+		c = cnts[i]
+		M = cv2.moments(c)
+		a = int(M["m10"] / M["m00"])
+		b = int(M["m01"] / M["m00"])
+		points_array_2.append((a,b))
+	#print (points_array_2)
+	hue_image_3 = ID_hue_image(hsv_image, color3, orig_image)
+	cnts = cv2.findContours(hue_image_3.copy(),cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)[-2]
+	points_array_3 = []
+	for i in range(0, len(cnts)):
+		c = cnts[i]
+		M = cv2.moments(c)
+		a = int(M["m10"] / M["m00"])
+		b = int(M["m01"] / M["m00"])
+		points_array_3.append((a,b))
+	#print (points_array_3)
+	
+	for i in range(0,len(points_array_1)):
+		d = 0
+		distances_1 = []
+		if (color1 == color2):
+			d = d + 1
+			points_array_2.remove(points_array_1[i])
+		#print(points_array_2)
+		for j in range(0, len(points_array_2)):
+			a = (points_array_1[i][0], points_array_1[i][1])
+			b = (points_array_2[j][0], points_array_2[j][1])
+			x_d = math.sqrt((a[0]-b[0])**2 + (a[1] - b[1])**2)
+			distances_1.append(x_d)
+		min_index, min_value = min(enumerate(distances_1), key=operator.itemgetter(1))
+		#print(i)
+		#print "min_index : %d" %min_index
+		if min_index < i :
+			#print "here"
+			index = min_index
+		else:
+			index = min_index + d
+		#print "index : %d" % index
+		if (color1 == color2):
+			points_array_2.insert(i,points_array_1[i])
+		final_coordinates[i].x2 = points_array_2[index]
+		final_coordinates[i].d1 = min_value
+
+	#print(len(points_array_3))
+	for i in range(0,len(points_array_1)):
+		d = 0
+		distances_2 = []
+		if (color1 == color3):
+			d = d + 1
+			points_array_3.remove(points_array_1[i])
+		if (color2 == color3):
+			#print(final_coordinates[i].x2)
+			points_array_3.remove(final_coordinates[i].x2)
+			d = d + 1
+		for j in range(0, len(points_array_3)):
+			a = (points_array_1[i][0], points_array_1[i][1])
+			b = (points_array_3[j][0], points_array_3[j][1])
+			x_d = math.sqrt((a[0]-b[0])**2 + (a[1] - b[1])**2)
+			distances_2.append(x_d)
+		min_index, min_value = min(enumerate(distances_2), key=operator.itemgetter(1))
+		#print(points_array_3)
+		if min_index < i :
+			index = min_index
+		else:
+			index = min_index + d
+		if (color1 == color3):
+			points_array_3.insert(i,points_array_1[i])
+		if (color2 == color3):
+			points_array_3.insert(i,final_coordinates[i].x2)
+		final_coordinates[i].x3 = points_array_3[index]
+		final_coordinates[i].d2 = min_value
+	
+	final_perims = []
+	check = True
+	for i in range(0,len(points_array_1)):
+		final_perims.append(final_coordinates[i].get_perimeter())
+		X = (final_coordinates[i].x1,final_coordinates[i].x2, final_coordinates[i].x3)
+		#print(X)
+		d1 = final_coordinates[i].d1
+		d2 = final_coordinates[i].d2
+		x = (final_coordinates[i].x2[0] + final_coordinates[i].x3[0])/2
+		y = (final_coordinates[i].x2[1] + final_coordinates[i].x3[1])/2
+		x1 = (x,y)
+		if (color2 != color3):
+			check = isLeft(final_coordinates[i].x1,x1,final_coordinates[i].x2)
+		if ((abs(d1 - d2) < 5) and check):
+			print ("\nRobot found")
+			print "d1: %d d2: %d" % (d1,d2)
+			print(X)
+			found = True
+			Robotx, Roboty, Robotdir = thetacalc(final_coordinates[i].x1,final_coordinates[i].x2, final_coordinates[i].x3)
+			robot.setPos(Robotx, Roboty, Robotdir)
+			print "Robot x: %d y: %d dir : %d" %(robot.xpos, robot.ypos, robot.dir)
+			break
+	
+	if found == False:
+		print "\nRobot not found"
+	#min_index, min_value = min(enumerate(final_perims), key=operator.itemgetter(1))
+	#X = (final_coordinates[min_index].x1,final_coordinates[min_index].x2, final_coordinates[min_index].x3)
+	#print (final_coordinates[min_index].get_perimeter())
+	#print(X)
+	
+
+
+	
+
 def track_robot(img, orig_image, robot):
 	circles = cv2.HoughCircles(img,cv2.cv.CV_HOUGH_GRADIENT,1,15,
-								param1=10,param2=27, minRadius=0,maxRadius=0)
+								param1=10,param2=20, minRadius=0,maxRadius=0)
 	output = img.copy()
 	coordinates = [[0 for x in range(2)] for y in range(3)] 
 	if circles is not None:
 		#print "Robot detected"
 		circles = np.round(circles[0,:]).astype("int")
 		i = 0
-		if len(circles) is 3:
+		#print "len circles: %d" % len(circles)
+		if len(circles) != 0:
 			for (x,y,r) in circles:
-				##print "Circle %d: %d y: %d r: %d" %(i,x,y,r)
+				#print "Circle %d: %d y: %d r: %d" %(i,x,y,r)
 				coordinates[i][0] = x
 				coordinates[i][1] = y
 				#cv2.circle(orig_image,(x,y),r,(0,255,0),4)
 				#cv2.rectangle(orig_image, (x - 5, y - 5), (x + 5, y + 5), (0, 128, 255), -1)
 				i = i + 1
 			
-			Robotx, Roboty, Robotdir = thetacalc(coordinates[0], coordinates[1], coordinates[2])
-			#print "Robot x: %d y: %d dir : %d" %(Robotx, Roboty, Robotdir)
+			Robotx, Roboty, Robotdir = thetacalc_n(coordinates[0], coordinates[1], coordinates[2])
+			print "Robot x: %d y: %d dir : %d" %(Robotx, Roboty, Robotdir)
 			robot.setPos(Robotx,Roboty,Robotdir)
 		else:
 			print "Error occured"
@@ -146,8 +310,25 @@ def track_robot(img, orig_image, robot):
 		
 	#cv2.imshow("output", orig_image)
 	#cv2.waitKey(0)
+def thetacalc_n(a,b,c):
+	final_x = a[0]
+	final_y = a[1]
+	x = (b[0] + c[0])/2
+	y = (b[1] + c[1])/2
+	x1 = (x,y)
+	x2 = (a[0],a[1])
+	x3 = (x2[0],y)
+	dis_x = x3[0] - x1[0]
+	dis_y = x3[1] - x2[1]
+	dir = (math.atan2(dis_y,dis_x) * 180/3.14159)
+	degrees = (dir + 360) % 360
+	return final_x, final_y, degrees
+
+	
 	
 def thetacalc(a, b, c):
+	final_x = 0
+	final_y = 0
 	t1 = (a[0],a[1])
 	t2 = (b[0],b[1])
 	t3 = (c[0],c[1])
@@ -167,11 +348,13 @@ def thetacalc(a, b, c):
 		x1 = (x,y)
 		x2 = (coord[2][0],coord[2][1])
 		x3 = (x2[0], y)
-		##print (x1)
-		##print (x2)
-		##print (x3)
+		#print (x1)
+		#print (x2)
+		#print (x3)
 		dis_x = x3[0] - x1[0]
 		dis_y = x3[1] - x2[1]
+		final_x = x2[0]
+		final_y = x2[1]
 	elif min_index is 1:
 		##print("a_c")
 		x = (coord[0][0] + coord[2][0])/2
@@ -179,11 +362,13 @@ def thetacalc(a, b, c):
 		x1 = (x,y)
 		x2 = (coord[1][0],coord[1][1])
 		x3 = (x2[0], y)
-		##print (x1)
-		##print (x2)
-		##print (x3)
+		#print (x1)
+		#print (x2)
+		#print (x3)
 		dis_x = x3[0] - x1[0]
 		dis_y = x3[1] - x2[1]
+		final_x = x2[0]
+		final_y = x2[1]
 	else:
 		##print("b_c")
 		x = (coord[1][0] + coord[2][0])/2
@@ -191,29 +376,33 @@ def thetacalc(a, b, c):
 		x1 = (x,y)
 		x2 = (coord[0][0],coord[0][1])
 		x3 = (x2[0], y)
-		##print (x1)
-		##print (x2)
-		##print (x3)
+		#print (x1)
+		#print (x2)
+		#print (x3)
 		dis_x = x3[0] - x1[0]
 		dis_y = x3[1] - x2[1]
-	
+		final_x = x2[0]
+		final_y = x2[1]
+		
 	##print "disy : %d disx : %d" % (dis_y, dis_x)
 	dir = (math.atan2(dis_y,dis_x) * 180/3.14159)
 	degrees = (dir + 360) % 360
 	##print "dir %d" %dir
-	return x, y, degrees
+	
+	return final_x, final_y, degrees
 	
 	
 
 def acquire_locations(img, robot):
 	coordinates = [[0 for x in range(2)] for y in range(3)] 
-	cnts = cv2.findContours(img.copy(),cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)[-2]
-	#print len(cnts)
+	#cnts = cv2.findContours(img.copy(),cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)[-2]
+	cnts = cv2.findContours(img.copy(),cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)[-2]
+	#print "len(cnts) : %d" % len(cnts)
 	if len(cnts) is 3:
 		#c = max(cnts,key=cv2.contourArea)
 		for i in range(0, 3):
 			c = cnts[i]
-			((x,y),radius) = cv2.minEnclosingCircle(c)
+			#((x,y),radius) = cv2.minEnclosingCircle(c)
 			M = cv2.moments(c)
 			a = int(M["m10"] / M["m00"])
 			b = int(M["m01"] / M["m00"])
@@ -224,7 +413,7 @@ def acquire_locations(img, robot):
 		#Roboty = (coordinates[0][1] + coordinates[1][1])/2
 		#Robotk = float((coordinates[0][1] - coordinates[1][1])) / (coordinates[0][0] - coordinates[1][0])
 		#Robotdir = abs(math.atan(Robotk) * 180 / 3.14159)
-		
+		print(coordinates)
 		Robotx, Roboty, Robotdir = thetacalc(coordinates[0], coordinates[1], coordinates[2])
 	
 		robot.setPos(Robotx,Roboty,Robotdir)
