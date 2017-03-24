@@ -132,7 +132,7 @@ def main():
 			#cv2.imshow("bgr", bgr_image)
 			#cv2.imshow("hsv", hsv_image)
 				
-			Robot1 = rs.Robot(1)
+			Robot1 = rs.Robot(RED)
 			#Robot2 = rs.Robot(2)
 			#print "Robot ID: %d" % (Robot1.ID)
 				
@@ -387,7 +387,7 @@ def acquire_locations(img, robot):
 	coordinates = [[0 for x in range(2)] for y in range(3)] 
 	#cnts = cv2.findContours(img.copy(),cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)[-2]
 	cnts = cv2.findContours(img.copy(),cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)[-2]
-	#print "len(cnts) : %d" % len(cnts)
+	print "len(cnts) : %d" % len(cnts)
 	if len(cnts) is 3:
 		#c = max(cnts,key=cv2.contourArea)
 		for i in range(0, 3):
