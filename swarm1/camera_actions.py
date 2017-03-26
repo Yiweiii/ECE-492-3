@@ -14,20 +14,20 @@ YELLOW = 4
 ORANGE = 5
 VIOLET = 6
 
-red_lower = np.array([0,100,100])
-red_upper = np.array([50,255,255])
+#red_lower = np.array([0,100,100])
+#red_upper = np.array([50,255,255])
 
-#red_lower = np.array([140,100,100])
-#red_upper = np.array([179,255,255])
+red_lower = np.array([140,100,100])
+red_upper = np.array([179,255,255])
 
 green_lower = np.array([37,81,158])
 green_upper = np.array([83,119,247])
 
-#blue_lower = np.array([70,100,255])
-#blue_upper = np.array([140,255,255])
+blue_lower = np.array([70,100,255])
+blue_upper = np.array([140,255,255])
 
-blue_lower = np.array([110,100,100])
-blue_upper = np.array([130,255,255])
+#blue_lower = np.array([110,100,100])
+#blue_upper = np.array([130,255,255])
 
 #yellow_lower = np.array([25,110,190])
 #yellow_upper = np.array([90,255,255])
@@ -132,8 +132,8 @@ def main():
 			#cv2.imshow("bgr", bgr_image)
 			#cv2.imshow("hsv", hsv_image)
 				
-			Robot1 = rs.Robot(1)
-			#Robot2 = rs.Robot(2)
+			Robot1 = rs.Robot(RED)
+			Robot2 = rs.Robot(GREEN)
 			#print "Robot ID: %d" % (Robot1.ID)
 				
 			#lower_red_hue_range = cv2.inRange(hsv_image,cv2.cv.Scalar(0,100,100),cv2.cv.Scalar(10,255,255))
@@ -403,14 +403,16 @@ def acquire_locations(img, robot):
 		#Roboty = (coordinates[0][1] + coordinates[1][1])/2
 		#Robotk = float((coordinates[0][1] - coordinates[1][1])) / (coordinates[0][0] - coordinates[1][0])
 		#Robotdir = abs(math.atan(Robotk) * 180 / 3.14159)
-		print(coordinates)
+		#print(coordinates)
 		Robotx, Roboty, Robotdir = thetacalc(coordinates[0], coordinates[1], coordinates[2])
 	
 		robot.setPos(Robotx,Roboty,Robotdir)
-		print "Robot x: %d y: %d dir : %d" %(robot.xpos, robot.ypos, robot.dir)
+		#print "Robot x: %d y: %d dir : %d" %(robot.xpos, robot.ypos, robot.dir)
+		return True
 		
 	else:
-		print "Robot not in camera-view"
+		print "Robot :%d not in camera-view" % robot.ID
+		return False
 		
 
 def path_finding(Map, robot, goals):

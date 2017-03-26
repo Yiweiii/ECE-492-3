@@ -10,12 +10,12 @@ import time
 cap = cv2.VideoCapture(0)
 
 #fourcc = cv2.cv.CV_FOURCC('X','V','I','D')
-video_writer = cv2.VideoWriter("output.avi", -1, 20, (640, 480))
+video_writer = cv2.VideoWriter("output3.avi", -1, 20, (640, 480))
 
 ##Create four robots
-robot1 = Robot(3)  # Blue
-robot2 = Robot(2)  # Green
-robot3 = Robot(2)
+robot1 = Robot(ca.BLUE)  # Blue
+robot2 = Robot(ca.GREEN)  # Green
+robot3 = Robot(ca.RED)
 
 # robot2.setPos(40,40,0)
 # robot3.setPos(40,40,0)
@@ -43,20 +43,23 @@ while True:
     bgr_image = cv2.medianBlur(bgr_image, 3)
     hsv_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2HSV)
     hue_image = ca.ID_hue_image(hsv_image, robot1.ID, orig_image)
+    #cv2.imshow("hue",hue_image)
     hue_image2 = ca.ID_hue_image(hsv_image, robot2.ID, orig_image)
+    hue_image3 = ca.ID_hue_image(hsv_image, robot3.ID, orig_image)
     robot_in_view = ca.acquire_locations(hue_image, robot1)
     ca.acquire_locations(hue_image2, robot2)
-    robot3.setPos(robot2.xpos, robot2.ypos, robot2.dir)
+    ca.acquire_locations(hue_image3, robot3)
     video_writer.write(bgr_image)
 
     if robot_in_view:
 
         print(i)
         print "Robot 1 x:%d y:%d dir:%d" % (robot1.xpos, robot1.ypos, robot1.dir)
-        print "Robot 2 and 3 x:%d y:%d" % (robot2.xpos, robot2.ypos)
+        print "Robot 2 x:%d y:%d dir:%d" % (robot2.xpos, robot2.ypos, robot2.dir)
+        print "Robot 3 x:%d y:%d dir:%d" % (robot3.xpos, robot3.ypos, robot3.dir)
 
         (xpos1, ypos1, angle1) = rendezvous(robot1, robot2, robot3)
-        if i == 100:
+        if i == 500:
             MESSAGE = 'stop'
             udpSerSock.sendto(MESSAGE, ADDR)
             cap.release()
@@ -65,13 +68,18 @@ while True:
             video_writer.release()
             exit(0)
 
-        lower_range = angle1 - 20
-        upper_range = angle1 + 20
+        lower_range = angle1 - 25
+        upper_range = angle1 + 25
+		
+        if lower_range < 0:
+           lower_range = 0
+        if upper_range > 360:
+           upper_range = 360
 
-        xpos_lower_range = xpos1 - 20
-        xpos_upper_range = xpos1 + 20
-        ypos_lower_range = ypos1 - 20
-        ypos_upper_range = ypos1 + 20
+        xpos_lower_range = xpos1 - 2
+        xpos_upper_range = xpos1 + 2
+        ypos_lower_range = ypos1 - 2
+        ypos_upper_range = ypos1 + 2
         print "angle 1: %d" % angle1
         print "xpos1 : %d " % xpos1
         print "ypos1 : %d " % ypos1
@@ -79,13 +87,13 @@ while True:
 
         if (robot1.dir < lower_range or robot1.dir > upper_range) and (count == 1):  ## rotate untill rotate is good
             if rotcount == 1:
-                a = (robot1.dir - angle1 +360 )% 360
+                a = (angle1 - robot1.dir +360 )% 360
                 rotcount = 2
-            if a < 180:
-                MESSAGE = 'A'
-            else:
+            if a <= 180:
                 MESSAGE = 'a'
-
+            else:
+                MESSAGE = 'A'
+            print "a : %d" % a
             print "Robot 1: x:%d y:%d dir:%d " % (robot1.xpos, robot1.ypos, robot1.dir)
         elif (robot1.xpos < xpos_lower_range or robot1.xpos > xpos_upper_range) or (robot1.ypos < ypos_lower_range or robot1.ypos > ypos_upper_range) :  ## Move untill xpos is good
             if fwdcount == 1:
