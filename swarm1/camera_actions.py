@@ -41,6 +41,13 @@ violet_upper = np.array([150,255,255])
 orange_lower = np.array([10, 100, 180])
 orange_upper = np.array([80,255,255])
 
+A = np.mat([[1,1,0,0],[0,1,0,0],[0,0,1,1],[0,0,0,1]])
+H = np.mat([[1,0,0,0],[0,0,1,0]])
+I = np.mat([[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]])
+R = np.mat([[10000,0],[0,10000]])
+x_save = []
+y_save = []
+
 class triangle:
 	def __init__(self, x1, x2, x3):
 		self.x1 = x1
@@ -406,15 +413,70 @@ def acquire_locations(img, robot):
 		#print(coordinates)
 		Robotx, Roboty, Robotdir = thetacalc(coordinates[0], coordinates[1], coordinates[2])
 	
-		robot.setPos(Robotx,Roboty,Robotdir)
+		
+		
 		#print "Robot x: %d y: %d dir : %d" %(robot.xpos, robot.ypos, robot.dir)
 		return True
 		
 	else:
+		Robotx = robot.X_estimate[0,0]
+		Roboty = robot.X_estimate[0,2]
 		print "Robot :%d not in camera-view" % robot.ID
 		return False
 		
-
+	kalman(robot)
+	robot.setPos(Robotx,Roboty,Robotdir)
+		
+		
+def kal_predict(X_estimate, X_predict, P_estimate, P_predict):
+    #u(k-1) = u_trans
+	global A
+	X_predict = (A*X_estimate.transpose()).transpose()
+	P_predict = A*P_estimate*(A.transpose())
+	
+def kal_update(new_sample, X_estimate, X_predict, P_estimate, P_predict):
+	global H, I, R
+	Kg = P_predict*(H.transpose())*(np.linalg.inv(H*P_predict*(H.transpose()) + R))
+	X_estimate = (X_predict.transpose() + Kg*(new_sample - H*(X_predict.transpose()))).transpose()
+	P_estimate = (I - Kg*H)*P_predict
+	#new_message[:,k] = new_sample - np.dot(H,X_predict[k,:].transpose())
+	#new_deviation = np.dot(H,np.dot(P_predict,H.transpose())) + R
+	#delta(k) = np.dot(np.dot(new_message[:,k].transpose(),np.linalg.inv(new_deviation)),new_message[:,k])
+	#u(k) = coeff * u(k-1) + delta(k)
+	#u_trans = u(k)
+	
+def kalman(robot):
+	global x_save, y_save, A, H, I, R
+	new_sample = np.mat([[0],[0]])
+	X_estimate = robot.X_estimate
+	X_predict = robot.X_predict
+	P_estimate = robot.P_estimate
+	P_predict = robot.P_predict
+	
+	if (count == 0):
+		x_save.append(x)
+		y_save.append(y)
+		count = count + 1
+	elif (count == 1):
+		x_save.append(x)
+		y_save.append(y)
+		X_estimate[0,0] = x[1]
+		X_estimate[0,1] = (x[1] - x[0])/2
+		X_estimate[0,2] = y[1]
+		X_estimate[0,3] = (y[1] - y[0])/2
+		count = count + 1
+	else:
+		new_sample[0] = x
+		new_sample[1] = y
+		kal_predict(X_estimate, X_predict, P_estimate, P_predict)
+		kal_update(new_sample, X_estimate, X_predict, P_estimate, P_predict)
+	
+	x_cor = X_estimate[0,0]
+	y_cor = X_estimate[0,2]
+	
+	robot.setKal(count, X_estimate, X_predict, P_estimate, P_predict)
+	#return x_cor, y_cor
+	
 def path_finding(Map, robot, goals):
 	cost = np.zeros(len(goals),dtype="int64")
 	path = [{} for _ in range(len(goals))]
