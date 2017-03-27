@@ -410,7 +410,8 @@ def acquire_locations(img, robot):
 		#Robotdir = abs(math.atan(Robotk) * 180 / 3.14159)
 		#print(coordinates)
 		Robotx, Roboty, Robotdir = thetacalc(coordinates[0], coordinates[1], coordinates[2])
-	
+		robot.x_record.append(Robotx)
+		robot.y_record.append(Roboty)
 		
 		
 		#print "Robot x: %d y: %d dir : %d" %(robot.xpos, robot.ypos, robot.dir)
@@ -423,7 +424,7 @@ def acquire_locations(img, robot):
 		return False
 		
 	kalman(robot)
-	robot.setPos(Robotx,Roboty,Robotdir)
+	robot.setPos(Robotx, Roboty, Robotdir)
 		
 		
 def kal_predict(X_estimate, X_predict, P_estimate, P_predict):
@@ -465,8 +466,8 @@ def kalman(robot):
 		kal_predict(X_estimate, X_predict, P_estimate, P_predict)
 		kal_update(new_sample, X_estimate, X_predict, P_estimate, P_predict)
 	
-	x_cor = X_estimate[0,0]
-	y_cor = X_estimate[0,2]
+	robot.xkal_record.append(X_estimate[0,0])
+	robot.ykal_record.append(X_estimate[0,2])
 	count = count + 1
 	robot.setKal(count, X_estimate, X_predict, P_estimate, P_predict)
 	#return x_cor, y_cor
