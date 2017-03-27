@@ -45,8 +45,6 @@ A = np.mat([[1,1,0,0],[0,1,0,0],[0,0,1,1],[0,0,0,1]])
 H = np.mat([[1,0,0,0],[0,0,1,0]])
 I = np.mat([[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]])
 R = np.mat([[10000,0],[0,10000]])
-x_save = []
-y_save = []
 
 class triangle:
 	def __init__(self, x1, x2, x3):
@@ -448,32 +446,28 @@ def kal_update(new_sample, X_estimate, X_predict, P_estimate, P_predict):
 def kalman(robot):
 	global x_save, y_save, A, H, I, R
 	new_sample = np.mat([[0],[0]])
+	count = robot.count
 	X_estimate = robot.X_estimate
 	X_predict = robot.X_predict
 	P_estimate = robot.P_estimate
 	P_predict = robot.P_predict
 	
-	if (count == 0):
-		x_save.append(x)
-		y_save.append(y)
-		count = count + 1
-	elif (count == 1):
-		x_save.append(x)
-		y_save.append(y)
-		X_estimate[0,0] = x[1]
-		X_estimate[0,1] = (x[1] - x[0])/2
-		X_estimate[0,2] = y[1]
-		X_estimate[0,3] = (y[1] - y[0])/2
-		count = count + 1
+	if (count == 1):
+		X_estimate[0,0] = robot.x_record[1]
+		X_estimate[0,1] = (robot.x_record[1] - robot.x_record[0])/2
+		X_estimate[0,2] = robot.y_record[1]
+		X_estimate[0,3] = (robot.y_record[1] - robot.y_record[0])/2
 	else:
 		new_sample[0] = x
 		new_sample[1] = y
+		X_estimate[0,1] = (robot.x_record[count] - robot.x_record[count - 1])/2
+		X_estimate[0,3] = (robot.y_record[count] - robot.y_record[count - 1])/2
 		kal_predict(X_estimate, X_predict, P_estimate, P_predict)
 		kal_update(new_sample, X_estimate, X_predict, P_estimate, P_predict)
 	
 	x_cor = X_estimate[0,0]
 	y_cor = X_estimate[0,2]
-	
+	count = count + 1
 	robot.setKal(count, X_estimate, X_predict, P_estimate, P_predict)
 	#return x_cor, y_cor
 	
