@@ -4,15 +4,6 @@ class Robot:
         self.ypos = 0
         self.dir = 0
         self.ID = ID
-		self.count = 0
-		self.X_estimate = np.asmatrix(np.zeros((1,4)))
-		self.X_predict = np.asmatrix(np.zeros((1,4)))
-		self.P_estimate = np.mat([[10000,5000,0,0],[5000,5000,0,0],[0,0,10000,5000],[0,0,5000,5000]])
-		self.P_predict = np.asmatrix(np.zeros((4,4)))
-		self.x_record = []
-		self.y_record = []
-		self.xkal_record = []
-		self.ykal_record = []
 
     def displayRobot(self):
         print
@@ -33,16 +24,5 @@ class Robot:
     def setPos(self, xpos, ypos, dir):
         self.xpos = xpos
         self.ypos = ypos
-		self.x_record = x_record
-		self.y_record = y_record
         self.dir = dir
-		
-	def setKal(self, count, X_estimate, X_predict, P_estimate, P_predict):
-		self.count = count
-		self.X_estimate = X_estimate 
-		self.X_predict = X_estimate 
-		self.P_estimate = X_estimate 
-		self.P_predict = P_predict
-		self.xkal_record = xkal_record
-		self.ykal_record = ykal_record
 		
