@@ -3,24 +3,24 @@ import cmath
 import math
 from robot_structure import Robot
 
-timestamp = .1 #Controls step size 
+timestamp = .5 #Controls step size
 
 def rendezvous(robot1, robot2, robot3):
-    dist1 = 183  # set to zer0 or small value for rendevous
-    dist2 = 225  # set to zer0 or small value for rendevous
+    dist1 = 100  # set to zer0 or small value for rendevous
+    dist2 = 100  # set to zer0 or small value for rendevous
 
-    x1 = robot1.xpos
-    x2 = robot2.xpos
-    x3 = robot3.xpos
-    y1 = robot1.ypos
-    y2 = robot2.ypos
-    y3 = robot3.ypos
+    y1 = -robot1.xpos
+    y2 = -robot2.xpos
+    y3 = -robot3.xpos
+    x1 = robot1.ypos
+    x2 = robot2.ypos
+    x3 = robot3.ypos
 
 
-    ya = -(x1 - x2)
-    yb = -(x1 - x3)
-    xa = (y1 - y2)
-    xb = (y1 - y3)
+    xa = (x1 - x2)
+    xb = (x1 - x3)
+    ya = (y1 - y2)
+    yb = (y1 - y3)
 
     maga = math.sqrt(xa * xa + ya * ya)
     magb = math.sqrt(xb * xb + yb * yb)

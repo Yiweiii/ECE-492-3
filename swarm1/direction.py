@@ -10,6 +10,8 @@ import time
 
 def direction(robot, xpos, ypos, angle, rotcount, fwdcount, a):
 
+    controlrange = (abs(angle - robot.dir)/7)
+
     lower_range = angle - 25
     upper_range = angle + 25
 
@@ -18,12 +20,24 @@ def direction(robot, xpos, ypos, angle, rotcount, fwdcount, a):
     if upper_range > 360:
         upper_range = 360
 
-    xpos_lower_range = xpos - 2
-    xpos_upper_range = xpos + 2
-    ypos_lower_range = ypos - 2
-    ypos_upper_range = ypos + 2
+    xpos_lower_range = xpos - 10
+    xpos_upper_range = xpos + 10
+    ypos_lower_range = ypos - 10
+    ypos_upper_range = ypos + 10
 
-    if (robot.dir < lower_range or robot.dir > upper_range):  ## rotate untill rotate is good
+    if (robot.xpos > xpos_lower_range and robot.xpos < xpos_upper_range) and (
+            robot.ypos > ypos_lower_range and robot.ypos < ypos_upper_range):
+        message = 'stop'
+        fwdcount = 1
+        rotcount = 1
+    elif (robot.dir > lower_range and robot.dir < upper_range):
+        rotcount = 1
+        if fwdcount == 1:
+            message = 's'
+            fwdcount = fwdcount + 1
+        else:
+            message = 'f'
+    else:
         if rotcount == 1:
             a = (angle - robot.dir + 360) % 360
             rotcount = 2
@@ -31,16 +45,7 @@ def direction(robot, xpos, ypos, angle, rotcount, fwdcount, a):
             message = 'a'
         else:
             message = 'A'
-    elif (robot.xpos < xpos_lower_range or robot.xpos > xpos_upper_range) or (
-            robot.ypos < ypos_lower_range or robot.ypos > ypos_upper_range):  ## Move untill xpos is good
-        if fwdcount == 1:
-            message = 's'
-            fwdcount = fwdcount + 1
-        else:
-            message = 'f'
-    else:
-        message = 'stop'
-        fwdcount = 1
-        rotcount = 1
+
+
 
     return message, rotcount, fwdcount, a
