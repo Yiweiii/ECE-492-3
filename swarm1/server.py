@@ -17,17 +17,10 @@ robot1 = Robot(ca.BLUE)  # Blue
 robot2 = Robot(ca.GREEN)  # Green
 robot3 = Robot(ca.RED)
 
-<<<<<<< HEAD
-#Blue Robot
 HOST1 = '192.168.1.7' # blue robot
 HOST2 = '192.168.1.3' # green robot
 HOST3 = '192.168.1.8' # red robot
-=======
-# robot2.setPos(40,40,0)
-# robot3.setPos(40,40,0)
 
-HOST = '192.168.1.3'
->>>>>>> parent of 7c858e0... Add files via upload
 PORT = 2390
 BUFSIZE = 1024
 FLAG = 0
@@ -37,9 +30,6 @@ ADDR2 = (HOST2, PORT) # green robot
 ADDR3 = (HOST3, PORT) # red robot
 
 udpSerSock = socket(AF_INET, SOCK_DGRAM)
-
-<<<<<<< HEAD
-#Red robot
 
 i = 0
 count = 1
@@ -59,15 +49,7 @@ a1 = 1
 a2 = 1
 a3 = 1
 
-=======
 
-i = 0
-count = 1
-rotcount = 1
-MESSAGE = "q"
-currMESSAGE = "q"
-fwdcount = 1
->>>>>>> parent of 7c858e0... Add files via upload
 while True:
     ret, bgr_image = cap.read()
     cv2.imshow("cam_image", bgr_image)
@@ -93,20 +75,15 @@ while True:
         (xpos1, ypos1, angle1) = rendezvous(robot1, robot2, robot3)
         if i == 500:
             MESSAGE = 'stop'
-<<<<<<< HEAD
             udpSerSock.sendto(MESSAGE, ADDR1)
             udpSerSock.sendto(MESSAGE, ADDR2)
             udpSerSock.sendto(MESSAGE, ADDR3)
-=======
-            udpSerSock.sendto(MESSAGE, ADDR)
->>>>>>> parent of 7c858e0... Add files via upload
             cap.release()
             cv2.destroyAllWindows()
             udpSerSock.close()
             video_writer.release()
             exit(0)
 
-<<<<<<< HEAD
         (xpos1, ypos1, angle1) = rendezvous(robot1, robot2, robot3) #blue
         (xpos2, ypos2, angle2) = rendezvous(robot2, robot1, robot3) #green
         (xpos3, ypos3, angle3) = rendezvous(robot3, robot2, robot1) #red
@@ -126,59 +103,7 @@ while True:
         if (MESSAGE3 != currMESSAGE3):
             udpSerSock.sendto(MESSAGE3, ADDR3)
             currMESSAGE3 = MESSAGE3
-=======
-        lower_range = angle1 - 25
-        upper_range = angle1 + 25
-		
-        if lower_range < 0:
-           lower_range = 0
-        if upper_range > 360:
-           upper_range = 360
 
-        xpos_lower_range = xpos1 - 2
-        xpos_upper_range = xpos1 + 2
-        ypos_lower_range = ypos1 - 2
-        ypos_upper_range = ypos1 + 2
-        print "angle 1: %d" % angle1
-        print "xpos1 : %d " % xpos1
-        print "ypos1 : %d " % ypos1
-
-
-        if (robot1.dir < lower_range or robot1.dir > upper_range) and (count == 1):  ## rotate untill rotate is good
-            if rotcount == 1:
-                a = (angle1 - robot1.dir +360 )% 360
-                rotcount = 2
-            if a <= 180:
-                MESSAGE = 'a'
-            else:
-                MESSAGE = 'A'
-            print "a : %d" % a
-            print "Robot 1: x:%d y:%d dir:%d " % (robot1.xpos, robot1.ypos, robot1.dir)
-        elif (robot1.xpos < xpos_lower_range or robot1.xpos > xpos_upper_range) or (robot1.ypos < ypos_lower_range or robot1.ypos > ypos_upper_range) :  ## Move untill xpos is good
-            if fwdcount == 1:
-                MESSAGE = 's'
-                print(MESSAGE)
-                fwdcount = fwdcount + 1
-            else:
-                MESSAGE = 'f'
-                print(MESSAGE)
-        else:
-            MESSAGE = 'stop'
-            (xpos1, ypos1, angle1) = rendezvous(robot1, robot2, robot3)
-            fwdcount = 1
-            rotcount = 1
-
-        ##MESSAGE = raw_input('>')
-        # print "send message: ", MESSAGE
-        # i = i + 1
-
-        # print(currMESSAGE)
-        # print(MESSAGE)
-        if (MESSAGE != currMESSAGE):
-            udpSerSock.sendto(MESSAGE, ADDR)
-            print "send message: ", MESSAGE
-            currMESSAGE = MESSAGE
->>>>>>> parent of 7c858e0... Add files via upload
         i = i + 1
     # try:
     # print(data)
@@ -200,14 +125,11 @@ while True:
     else:
         print "Robot not in view - stopping robot"
         MESSAGE = "stop"
-<<<<<<< HEAD
         udpSerSock.sendto(MESSAGE, ADDR1)
         udpSerSock.sendto(MESSAGE, ADDR2)
         udpSerSock.sendto(MESSAGE, ADDR3)
-=======
-        udpSerSock.sendto(MESSAGE, ADDR)
->>>>>>> parent of 7c858e0... Add files via upload
-        print "send message : ", MESSAGE
+
+        #print "send message : ", MESSAGE
         #exit(0)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
