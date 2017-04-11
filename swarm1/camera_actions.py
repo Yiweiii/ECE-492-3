@@ -348,10 +348,8 @@ def thetacalc(a, b, c):
 		#print (x3)
 		dis_x = x3[0] - x1[0]
 		dis_y = x3[1] - x2[1]
-		mid_x = (x3[0] + x1[0])/2;
-		mid_y = (x3[0] + x2[0])/2;
-		final_x = (mid_x + x2[0])/2
-		final_y = (mid_y + x2[1])/2
+		final_x = (x + x2[0])/2;
+		final_y = (y + x2[1])/2;
 		#final_x = x2[0]
 		#final_y = x2[1]
 	elif min_index is 1:
@@ -366,10 +364,8 @@ def thetacalc(a, b, c):
 		#print (x3)
 		dis_x = x3[0] - x1[0]
 		dis_y = x3[1] - x2[1]
-		mid_x = (x3[0] + x1[0])/2;
-		mid_y = (x3[0] + x2[0])/2;
-		final_x = (mid_x + x2[0])/2
-		final_y = (mid_y + x2[1])/2
+		final_x = (x + x2[0])/2;
+		final_y = (y + x2[1])/2;
 		#final_x = x2[0]
 		#final_y = x2[1]
 	else:
@@ -384,10 +380,8 @@ def thetacalc(a, b, c):
 		#print (x3)
 		dis_x = x3[0] - x1[0]
 		dis_y = x3[1] - x2[1]
-		mid_x = (x3[0] + x1[0])/2;
-		mid_y = (x3[0] + x2[0])/2;
-		final_x = (mid_x + x2[0])/2
-		final_y = (mid_y + x2[1])/2
+		final_x = (x + x2[0])/2;
+		final_y = (y + x2[1])/2;
 		#final_x = x2[0]
 		#final_y = x2[1]
 		
