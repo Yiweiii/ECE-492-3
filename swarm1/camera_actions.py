@@ -348,8 +348,12 @@ def thetacalc(a, b, c):
 		#print (x3)
 		dis_x = x3[0] - x1[0]
 		dis_y = x3[1] - x2[1]
-		final_x = x2[0]
-		final_y = x2[1]
+		mid_x = (x3[0] + x1[0])/2;
+		mid_y = (x3[0] + x2[0])/2;
+		final_x = (mid_x + x2[0])/2
+		final_y = (mid_y + x2[1])/2
+		#final_x = x2[0]
+		#final_y = x2[1]
 	elif min_index is 1:
 		##print("a_c")
 		x = (coord[0][0] + coord[2][0])/2
@@ -362,8 +366,12 @@ def thetacalc(a, b, c):
 		#print (x3)
 		dis_x = x3[0] - x1[0]
 		dis_y = x3[1] - x2[1]
-		final_x = x2[0]
-		final_y = x2[1]
+		mid_x = (x3[0] + x1[0])/2;
+		mid_y = (x3[0] + x2[0])/2;
+		final_x = (mid_x + x2[0])/2
+		final_y = (mid_y + x2[1])/2
+		#final_x = x2[0]
+		#final_y = x2[1]
 	else:
 		##print("b_c")
 		x = (coord[1][0] + coord[2][0])/2
@@ -376,8 +384,12 @@ def thetacalc(a, b, c):
 		#print (x3)
 		dis_x = x3[0] - x1[0]
 		dis_y = x3[1] - x2[1]
-		final_x = x2[0]
-		final_y = x2[1]
+		mid_x = (x3[0] + x1[0])/2;
+		mid_y = (x3[0] + x2[0])/2;
+		final_x = (mid_x + x2[0])/2
+		final_y = (mid_y + x2[1])/2
+		#final_x = x2[0]
+		#final_y = x2[1]
 		
 	##print "disy : %d disx : %d" % (dis_y, dis_x)
 	dir = (math.atan2(dis_y,dis_x) * 180/3.14159)
