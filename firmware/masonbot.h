@@ -56,9 +56,9 @@ class MasonBot {
 		// Motor control
 		//
 		int getBatteryPower();
-		void moveForward();
-		void moveRotateCCW();
-		void moveRotateCW();
+		void moveForward(int velocity);
+		void moveRotateCCW(int velocity);
+		void moveRotateCW(int velocity);
 		void moveStop();
 
 
@@ -73,6 +73,6 @@ class MasonBot {
 		void _motor2(int speed);
 		void _motor3(int speed);
 		int _read_battery();
-		void _robo_move(int x, int y, int w);
+		void _robo_move(int x, int y, int w, int velocity);
 };
 #endif
