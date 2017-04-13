@@ -46,11 +46,15 @@ char packetBuffer[255]; //buffer to hold incoming packet
 char  ReplyBuffer[] = "ACK0";       // a string to send back
 int microseconds = 50000;
 
+//**********************Added for 3 digit velocity
+char vel[2]; //buffer for pwm input
+int velocity = 0;
+//************************************
 
 WiFiUDP Udp;
 
 void setup() {
-      MasonBot();
+    MasonBot();
     MasonBot().moveStop();
     
 WiFi.setPins(41,45,47,43); //47 CS, 45 en, 43 irq, 41 rst
@@ -64,7 +68,7 @@ WiFi.setPins(41,45,47,43); //47 CS, 45 en, 43 irq, 41 rst
 //  Timer1.initialize(microseconds);
 //  Timer1.attachInterrupt(checkspeed);
   while (!Serial) {
-    ; // wait for serial port to connect. Needed for native USB port only
+   ; // wait for serial port to connect. Needed for native USB port only
   }
 
   // check for the presence of the shield:
@@ -109,6 +113,12 @@ void loop() {
     // read the packet into packetBufffer
     int len = Udp.read(packetBuffer, 255);
     if (len > 0) packetBuffer[len] = 0;
+
+
+    //****************************ADDED for 3 digit velocity
+    char *vel = packetBuffer + 1;
+    velocity = strtoul(vel, NULL, 0);
+    //*********************************************
     Serial.println("Contents:");
     Serial.println(packetBuffer);
 
@@ -117,15 +127,15 @@ void loop() {
     Udp.write(ReplyBuffer);
     Udp.endPacket();
   }
-    
-  if(packetBuffer[0] == 'A'){
-        MasonBot().moveRotateCW();
+  //***************************send velocity to move commands  
+  if(packetBuffer[0] == 'a'){
+        MasonBot().moveRotateCW(velocity);
         packetBuffer[0] = ' ';
-  }else if(packetBuffer[0] == 'a'){
-        MasonBot().moveCCW();
+  }else if(packetBuffer[0] == 'A'){
+        MasonBot().moveRotateCCW(velocity);
          packetBuffer[0] = ' ';
   }else if(packetBuffer[0] == 'f'){
-        MasonBot().moveForward();
+        MasonBot().moveForward(velocity);
          packetBuffer[0] = ' ';         
   }else if(packetBuffer[0] == 's'){
         MasonBot().moveStop();
@@ -181,5 +191,4 @@ void printWiFiStatus() {
 //  Serial.println(count2);
 //  Serial.println(count3);
 //}
-
 
