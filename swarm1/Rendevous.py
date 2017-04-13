@@ -42,6 +42,7 @@ def rendezvous(robot1, robot2, robot3):
     finalx = robot1.xpos - xx
     finaly = robot1.ypos - yy
 
+
     ##(mag, phase) = cmath.polar((complex(xx,yy)))
 
     phase = math.atan2(yy, xx)

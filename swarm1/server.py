@@ -109,16 +109,16 @@ while True:
         print("robot4Yellow", MESSAGE4, robot4.xpos, robot4.ypos, xpos4, ypos4, robot4.dir, angle4)
 
         if (MESSAGE1 != currMESSAGE1):
-            udpSerSock.sendto(MESSAGE1, ADDR1)
+        #    udpSerSock.sendto(MESSAGE1, ADDR1)
             currMESSAGE1 = MESSAGE1
         if (MESSAGE2 != currMESSAGE2):
             udpSerSock.sendto(MESSAGE2, ADDR2)
             currMESSAGE2 = MESSAGE2
         if (MESSAGE3 != currMESSAGE3):
-            udpSerSock.sendto(MESSAGE3, ADDR3)
+        #    udpSerSock.sendto(MESSAGE3, ADDR3)
             currMESSAGE3 = MESSAGE3
         if (MESSAGE4 != currMESSAGE4):
-            udpSerSock.sendto(MESSAGE4, ADDR4)
+        #    udpSerSock.sendto(MESSAGE4, ADDR4)
             currMESSAGE4 = MESSAGE4
 
         i = i + 1
