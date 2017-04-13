@@ -7,17 +7,15 @@
 MasonBot::MasonBot() {
 
 	// Initialize all ports
-	pinMode(_motor1_pwm, OUTPUT);
-	pinMode(_motor1_dir, OUTPUT);
-	pinMode(_motor1_halt, OUTPUT);
-
-	pinMode(_motor2_pwm, OUTPUT);
-	pinMode(_motor2_dir, OUTPUT);
-	pinMode(_motor2_halt, OUTPUT);
-
-	pinMode(_motor3_pwm, OUTPUT);
-	pinMode(_motor3_dir, OUTPUT);
-	pinMode(_motor3_halt, OUTPUT);
+	pinMode(_motor1_pwm_A, OUTPUT);
+  pinMode(_motor1_pwm_B, OUTPUT);
+  
+  pinMode(_motor2_pwm_A, OUTPUT);
+  pinMode(_motor2_pwm_B, OUTPUT);
+  
+  pinMode(_motor3_pwm_A, OUTPUT);
+  pinMode(_motor3_pwm_B, OUTPUT);
+ 
 
 	// Set all low
 	_stop_all_motors();
@@ -26,56 +24,60 @@ MasonBot::MasonBot() {
 void MasonBot::_stop_all_motors() {
 	// Stopping motors requires HALT low...
 	// and PWM and DIR high.
-	digitalWrite(_motor1_halt, LOW);
-	digitalWrite(_motor1_pwm, HIGH);
-	digitalWrite(_motor1_dir, HIGH);
-
-	digitalWrite(_motor2_halt, LOW);
-	digitalWrite(_motor2_pwm, HIGH);
-	digitalWrite(_motor2_dir, HIGH);
-
-	digitalWrite(_motor3_halt, LOW);
-	digitalWrite(_motor3_pwm, HIGH);
-	digitalWrite(_motor3_dir, HIGH);
+	digitalWrite(_motor1_pwm_A, HIGH);
+  digitalWrite(_motor1_pwm_B, HIGH);
+  
+  digitalWrite(_motor2_pwm_A, HIGH);
+  digitalWrite(_motor2_pwm_B, HIGH);
+  
+  digitalWrite(_motor3_pwm_A, HIGH);
+  digitalWrite(_motor3_pwm_B, HIGH);
+ 
 }
 
 void MasonBot::_M1Dirset(double dir){
-	if (dir < 0)
-		digitalWrite(_motor1_dir, HIGH);
-	else
-		digitalWrite(_motor1_dir, LOW);
+	_dir1 = dir;
 }
 	
 void MasonBot::_M2Dirset(double dir){
-	if (dir < 0)
-		digitalWrite(_motor2_dir, HIGH);
-	else
-		digitalWrite(_motor2_dir, LOW);
+	_dir2 = dir;
 }	 
 
 void MasonBot::_M3Dirset(double dir){
-	if (dir < 0)
-		digitalWrite(_motor3_dir, HIGH);
-	else
-		digitalWrite(_motor3_dir, LOW);
+	_dir3 = dir;
 }	 
  
 	
 void MasonBot::_motor1(int speed1) {
-	digitalWrite(_motor1_halt, HIGH);
-	analogWrite(_motor1_pwm, speed1);
+  if (_dir1 > 0) {
+    analogWrite(_motor1_pwm_A, speed1);
+    digitalWrite(_motor1_pwm_B, LOW);
+  } else {
+    analogWrite(_motor1_pwm_B, speed1);
+    digitalWrite(_motor1_pwm_A, LOW);
+  }
 	//Serial.println(speed);
 }
 
 void MasonBot::_motor2(int speed2) {
-	digitalWrite(_motor2_halt, HIGH);
-	analogWrite(_motor2_pwm, speed2);
+	if (_dir2 > 0) {
+    analogWrite(_motor2_pwm_A, speed2);
+    digitalWrite(_motor2_pwm_B, LOW);
+  } else {
+    analogWrite(_motor2_pwm_B, speed2);
+    digitalWrite(_motor2_pwm_A, LOW);
+  }
 	//Serial.println(speed);
 }
 
 void MasonBot::_motor3(int speed3) {
-	digitalWrite(_motor3_halt, HIGH);
-	analogWrite(_motor3_pwm, speed3);
+	if (_dir3 > 0) {
+    analogWrite(_motor3_pwm_A, speed3);
+    digitalWrite(_motor3_pwm_B, LOW);
+  } else {
+    analogWrite(_motor3_pwm_B, speed3);
+    digitalWrite(_motor3_pwm_A, LOW);
+  }
 //Serial.println(speed);
 }
 

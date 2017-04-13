@@ -8,13 +8,13 @@
 #ifndef MASONBOT_H
 #define MASONBOT_H
 
-#include "Arduino.h"
+//#include "Arduino.h"
 
 /* Pinout definitionsl
  * The following correspond to pins on the Arduino Mega board.
  */
 
-/* Motor pins */
+/* Motor pins *//*
 #define _motor1_pwm 2
 #define _motor1_dir 25
 #define _motor1_halt 22
@@ -26,6 +26,15 @@
 #define _motor3_pwm 5
 #define _motor3_dir 27
 #define _motor3_halt 24
+*/
+#define _motor1_pwm_A 2
+#define _motor1_pwm_B 8
+
+#define _motor2_pwm_A 3
+#define _motor2_pwm_B 7
+
+#define _motor3_pwm_A 5
+#define _motor3_pwm_B 6
 
 /* IR light gate pins
  *
@@ -73,6 +82,9 @@ class MasonBot {
 		void _motor2(int speed);
 		void _motor3(int speed);
 		int _read_battery();
+    double _dir1;
+    double _dir2;
+    double _dir3;
 		void _robo_move(int x, int y, int w);
 };
 #endif

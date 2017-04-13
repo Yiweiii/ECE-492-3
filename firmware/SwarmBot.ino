@@ -1,18 +1,18 @@
 /*
   WiFi UDP Send and Receive String
 
- This sketch wait an UDP packet on localPort using a WiFi shield.
- When a packet is received an Acknowledge packet is sent to the client on port remotePort
+  This sketch wait an UDP packet on localPort using a WiFi shield.
+  When a packet is received an Acknowledge packet is sent to the client on port remotePort
 
- Circuit:
- * WiFi shield attached
+  Circuit:
+   WiFi shield attached
 
- created 30 December 2012
- by dlf (Metodo2 srl)
+  created 30 December 2012
+  by dlf (Metodo2 srl)
 
- */
+*/
 
-#include <masonbot.h>
+#include "masonbot.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <TimerOne.h>
@@ -26,16 +26,16 @@ const int TEST = 88;   //Battery test
 int battery = 6;
 float batterylevel = 0;
 
-int count1 =0;
-int count2 =0;
-int count3 =0;
+int count1 = 0;
+int count2 = 0;
+int count3 = 0;
 
 int status = WL_IDLE_STATUS;
 //char ssid[] = "Verizon-SM-G930V-6155"; //  your network SSID (name) // IP address 192.168.43.95(may change)
-//char pass[] = "jasonwifi"; 
+//char pass[] = "jasonwifi";
 
 char ssid[] = "QCHJB"; //  your network SSID (name) // IP address 192.168.43.95(may change)
-char pass[] = "robotsarecool2!"; 
+char pass[] = "robotsarecool2!";
 
 int keyIndex = 1;            // your network key Index number (needed only for WEP)
 
@@ -50,25 +50,33 @@ int microseconds = 50000;
 WiFiUDP Udp;
 
 void setup() {
-      MasonBot();
-    MasonBot().moveStop();
-    
-WiFi.setPins(41,45,47,43); //47 CS, 45 en, 43 irq, 41 rst
+  MasonBot();
+  MasonBot().moveStop();
+  //WiFi.setPins(41, 45, 47, 43);
+  pinMode(43, OUTPUT);
+
+  // DO NOT CHANGE THIS!!!!
+  digitalWrite(43, HIGH);
+  WiFi.setPins(41, 45, 47);
+
+
   //Initialize serial and wait for port to open:
-  Serial.begin(9600);
+  //Serial.begin(9600);
 
 
-//  attachInterrupt(digitalPinToInterrupt(_ir_en_1), counter1, FALLING);
-//  attachInterrupt(digitalPinToInterrupt(_ir_en_2), counter2, FALLING);
-//  attachInterrupt(digitalPinToInterrupt(_ir_en_3), counter3, FALLING);
-//  Timer1.initialize(microseconds);
-//  Timer1.attachInterrupt(checkspeed);
-  while (!Serial) {
-    ; // wait for serial port to connect. Needed for native USB port only
-  }
+  //  attachInterrupt(digitalPinToInterrupt(_ir_en_1), counter1, FALLING);
+  //  attachInterrupt(digitalPinToInterrupt(_ir_en_2), counter2, FALLING);
+  //  attachInterrupt(digitalPinToInterrupt(_ir_en_3), counter3, FALLING);
+  //  Timer1.initialize(microseconds);
+  //  Timer1.attachInterrupt(checkspeed);
+  //while (!Serial) {
+  ; // wait for serial port to connect. Needed for native USB port only
+  //}
 
   // check for the presence of the shield:
   if (WiFi.status() == WL_NO_SHIELD) {
+    DDRC = 0xFF;
+    PORTC = 0xFF;
     Serial.println("WiFi shield not present");
     // don't continue:
     while (true);
@@ -76,6 +84,8 @@ WiFi.setPins(41,45,47,43); //47 CS, 45 en, 43 irq, 41 rst
 
   // attempt to connect to WiFi network:
   while ( status != WL_CONNECTED) {
+    DDRC = 0xFF;
+    PORTC = 0x03;
     Serial.print("Attempting to connect to SSID: ");
     Serial.println(ssid);
     // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
@@ -93,7 +103,7 @@ WiFi.setPins(41,45,47,43); //47 CS, 45 en, 43 irq, 41 rst
 }
 
 void loop() {
-  
+
   // if there's data available, read a packet
   int packetSize = Udp.parsePacket();
   if (packetSize)
@@ -117,19 +127,19 @@ void loop() {
     Udp.write(ReplyBuffer);
     Udp.endPacket();
   }
-    
-  if(packetBuffer[0] == 'A'){
-        MasonBot().moveRotateCW();
-        packetBuffer[0] = ' ';
-  }else if(packetBuffer[0] == 'a'){
-        MasonBot().moveCCW();
-         packetBuffer[0] = ' ';
-  }else if(packetBuffer[0] == 'f'){
-        MasonBot().moveForward();
-         packetBuffer[0] = ' ';         
-  }else if(packetBuffer[0] == 's'){
-        MasonBot().moveStop();
-         packetBuffer[0] = ' ';
+
+  if (packetBuffer[0] == 'A') {
+    MasonBot().moveRotateCW();
+    packetBuffer[0] = ' ';
+  } else if (packetBuffer[0] == 'a') {
+    MasonBot().moveRotateCCW();
+    packetBuffer[0] = ' ';
+  } else if (packetBuffer[0] == 'f') {
+    MasonBot().moveForward();
+    packetBuffer[0] = ' ';
+  } else if (packetBuffer[0] == 's') {
+    MasonBot().moveStop();
+    packetBuffer[0] = ' ';
   }
 }
 
@@ -152,7 +162,7 @@ void printWiFiStatus() {
 }
 
 ////Counters for encoders
-//void counter1() {  
+//void counter1() {
 //  count1 += 1;
 //  Serial.println(count1);
 //}
@@ -168,12 +178,12 @@ void printWiFiStatus() {
 //void checkspeed(){
 //  //Add code to counter compared to expected(based on pwm value)
 //  // Compare count with wifioutpwm  ie count = 100, and wifipwm = 200 means count should be 75 lower outpwm
-//  // one revolution is 8 counts,  
-//  // if count is < expected 
+//  // one revolution is 8 counts,
+//  // if count is < expected
 //  //      outpwm = outpwm - 10  use a variable based on the difference of actual to expected.
 //  //else if count > expected
 //  //      outpwm = outpwm + 10
-//  
+//
 //  count1 = 0;
 //  count2 = 0;
 //  count3 = 0;
