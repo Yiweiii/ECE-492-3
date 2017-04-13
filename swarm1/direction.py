@@ -26,18 +26,14 @@ def direction(robot, xpos, ypos, angle, rotcount, fwdcount, a):
     ypos_upper_range = ypos + 10
 
     mag = math.sqrt(((xpos - robot.xpos)*(xpos-robot.xpos)) + ((ypos - robot.ypos)*(ypos-robot.ypos)))
-    mag = int(200*mag/100)
+    mag = int(50 + 1.5*mag)
     if mag >= 200:
         mag = 200
-    if mag <= 50:
-        mag = 50
 
     rotmag = abs(angle - robot.dir)
-    rotmag = int(200*rotmag/180)
+    rotmag = int(50 + 5*rotmag/6)
     if rotmag >= 200:
         rotmag = 200
-    if rotmag <= 50:
-        rotmag = 50
 
     if (robot.xpos > xpos_lower_range and robot.xpos < xpos_upper_range) and (
             robot.ypos > ypos_lower_range and robot.ypos < ypos_upper_range):
