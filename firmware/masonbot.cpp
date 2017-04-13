@@ -92,21 +92,21 @@ int MasonBot::getBatteryPower() {
 	return _read_battery();
 }
 
-void MasonBot::moveForward()  {
-	_robo_move(1,0,0);  //move forward
+void MasonBot::moveForward(int velocity)  {
+	_robo_move(1,0,0,velocity);  //move forward
 }
-void MasonBot::moveRotateCCW(){
-	_robo_move(0,0,1);  //rotate CCW
+void MasonBot::moveRotateCCW(int velocity){
+	_robo_move(0,0,1,velocity);  //rotate CCW
 }
-void MasonBot::moveRotateCW(){
-	_robo_move(0,0,-1);  //rotate CCW
+void MasonBot::moveRotateCW(int velocity){
+	_robo_move(0,0,-1,velocity);  //rotate CCW
 }
 
 void MasonBot::moveStop(){
 	_stop_all_motors();  //stop
 }
 
-void MasonBot::_robo_move(int x, int y, int w){
+void MasonBot::_robo_move(int x, int y, int w, int velocity){
 	//matrix equation to calc. forces for each of the motors of the holonomic robot
 	double f1 = (0.58*x) - (0.33*y) + (0.33*w);
 	double f2 = (-0.58*x) - (0.33*y) + (0.33*w);
@@ -127,7 +127,7 @@ void MasonBot::_robo_move(int x, int y, int w){
 	f_max = f3t;
 
 	if (f_max != 0)				//if max force is non-zero
-		f_max_ard = 200/f_max;
+		f_max_ard = (200/f_max) * (double(velocity)/200);
 	else				        //if max force is 0 (i.e STOP)
 		f_max_ard = 0;
 	
