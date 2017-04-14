@@ -19,10 +19,18 @@ robot2 = Robot(ca.GREEN)  # Green
 robot3 = Robot(ca.RED)    # Red
 robot4 = Robot(ca.YELLOW) # Yellow
 
-HOST1 = '192.168.1.7' # blue robot
-HOST2 = '192.168.1.3' # green robot
-HOST3 = '192.168.1.8' # red robot
-HOST4 = '192.168.1.6' # Yellow Robot
+#Current map
+# Robot1 F8:F0:05:F1:D6:1C  - .6 - blue
+# Robot2 F8:F0:05:F7:FF:F9  - .2 - green
+# Robot3 F8:F0:05:F7:FF:F1  - .4 - red
+# Robot4 F8:F0:05:F7:FF:F2  - .5 - yellow
+#
+
+
+HOST1 = '192.168.1.6' # blue robot
+HOST2 = '192.168.1.2' # green robot
+HOST3 = '192.168.1.4' # red robot
+HOST4 = '192.168.1.5' # Yellow Robot
 
 PORT = 2390
 BUFSIZE = 1024
@@ -70,7 +78,8 @@ while True:
     hue_image2 = ca.ID_hue_image(hsv_image, robot2.ID, orig_image) # Green
     hue_image3 = ca.ID_hue_image(hsv_image, robot3.ID, orig_image) # Red
     hue_image4 = ca.ID_hue_image(hsv_image, robot4.ID, orig_image) #Yellow
-    robot_in_view = ca.acquire_locations(hue_image, robot1)
+    robot_in_view =  True
+    ca.acquire_locations(hue_image, robot1)
     ca.acquire_locations(hue_image2, robot2)
     ca.acquire_locations(hue_image3, robot3)
     ca.acquire_locations(hue_image4, robot4)
@@ -109,16 +118,16 @@ while True:
         print("robot4Yellow", MESSAGE4, robot4.xpos, robot4.ypos, xpos4, ypos4, robot4.dir, angle4)
 
         if (MESSAGE1 != currMESSAGE1):
-        #    udpSerSock.sendto(MESSAGE1, ADDR1)
+            udpSerSock.sendto(MESSAGE1, ADDR1)
             currMESSAGE1 = MESSAGE1
         if (MESSAGE2 != currMESSAGE2):
             udpSerSock.sendto(MESSAGE2, ADDR2)
             currMESSAGE2 = MESSAGE2
         if (MESSAGE3 != currMESSAGE3):
-        #    udpSerSock.sendto(MESSAGE3, ADDR3)
+            udpSerSock.sendto(MESSAGE3, ADDR3)
             currMESSAGE3 = MESSAGE3
         if (MESSAGE4 != currMESSAGE4):
-        #    udpSerSock.sendto(MESSAGE4, ADDR4)
+            udpSerSock.sendto(MESSAGE4, ADDR4)
             currMESSAGE4 = MESSAGE4
 
         i = i + 1

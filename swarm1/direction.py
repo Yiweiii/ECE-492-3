@@ -20,10 +20,10 @@ def direction(robot, xpos, ypos, angle, rotcount, fwdcount, a):
     if upper_range > 360:
         upper_range = 360
 
-    xpos_lower_range = xpos - 10
-    xpos_upper_range = xpos + 10
-    ypos_lower_range = ypos - 10
-    ypos_upper_range = ypos + 10
+    xpos_lower_range = xpos - 5
+    xpos_upper_range = xpos + 5
+    ypos_lower_range = ypos - 5
+    ypos_upper_range = ypos + 5
 
     mag = math.sqrt(((xpos - robot.xpos)*(xpos-robot.xpos)) + ((ypos - robot.ypos)*(ypos-robot.ypos)))
     mag = int(50 + 1.5*mag)
