@@ -45,7 +45,10 @@ char packetBuffer[255]; //buffer to hold incoming packet
 
 char  ReplyBuffer[] = "ACK0";       // a string to send back
 int microseconds = 50000;
-
+//**********************Added for 3 digit velocity
+char vel[2]; //buffer for pwm input
+int velocity = 0;
+//************************************
 
 WiFiUDP Udp;
 
@@ -135,43 +138,37 @@ void loop() {
   int packetSize = Udp.parsePacket();
   if (packetSize)
   {
-    Serial.print("Received packet of size ");
-    Serial.println(packetSize);
-    Serial.print("From ");
+
     IPAddress remoteIp = Udp.remoteIP();
-    Serial.print(remoteIp);
-    Serial.print(", port ");
-    Serial.println(Udp.remotePort());
 
     // read the packet into packetBufffer
     int len = Udp.read(packetBuffer, 255);
     if (len > 0) packetBuffer[len] = 0;
-    Serial.println("Contents:");
-    Serial.println(packetBuffer);
 
+
+    //****************************ADDED for 3 digit velocity
+    char *vel = packetBuffer + 1;
+    velocity = strtoul(vel, NULL, 0);
+    //*********************************************
     // send a reply, to the IP address and port that sent us the packet we received
     Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
     Udp.write(ReplyBuffer);
     Udp.endPacket();
   }
-
-  if (packetBuffer[0] == 'A') {
-    MasonBot().moveRotateCW();
-    packetBuffer[0] = ' ';
-  } else if (packetBuffer[0] == 'a') {
-    MasonBot().moveRotateCCW();
-    packetBuffer[0] = ' ';
-  } else if (packetBuffer[0] == 'f') {
-    MasonBot().moveForward();
-    packetBuffer[0] = ' ';
-  } else if (packetBuffer[0] == 's') {
-    MasonBot().moveStop();
-    packetBuffer[0] = ' ';
+  //***************************send velocity to move commands  
+  if(packetBuffer[0] == 'a'){
+        MasonBot().moveRotateCW(velocity);
+        packetBuffer[0] = ' ';
+  }else if(packetBuffer[0] == 'A'){
+        MasonBot().moveRotateCCW(velocity);
+         packetBuffer[0] = ' ';
+  }else if(packetBuffer[0] == 'f'){
+        MasonBot().moveForward(velocity);
+         packetBuffer[0] = ' ';         
+  }else if(packetBuffer[0] == 's'){
+        MasonBot().moveStop();
+         packetBuffer[0] = ' ';
   }
- /* PORTC = (TCCR3B&7) <<2;
-  delay(1000);
-  PORTC = (TCCR4B&7) <<2;
-  delay(1000);*/
 }
 
 
