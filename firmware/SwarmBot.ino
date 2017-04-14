@@ -53,12 +53,37 @@ void setup() {
   MasonBot();
   MasonBot().moveStop();
   //WiFi.setPins(41, 45, 47, 43);
+  pinMode(A1, INPUT);
   pinMode(43, OUTPUT);
 
   // DO NOT CHANGE THIS!!!!
   digitalWrite(43, HIGH);
   WiFi.setPins(41, 45, 47);
+  /*DDRC = 0xFF;
+  PORTC = (TCCR3A&0xC0) >> 5;
+  delay(2000);
+  PORTC = (TCCR3A&0x30) >> 3;
+  delay(2000);
+  PORTC = (TCCR3A&0x0C) >> 1;
+  delay(2000);
+   
+   PORTC = (TCCR4A&0xC0) >> 5;
+  delay(2000);
+  PORTC = (TCCR4A&0x30) >> 3;
+  delay(2000);
+  PORTC = (TCCR3A&0x0C) >> 1;
+  delay(2000);*/
+  /*
+  PORTC = (TCCR3C&7) <<2;
+  delay(1000);
+  PORTC = (TCCR4A&7) <<2;
+  delay(1000);
+  PORTC = (TCCR4B&7) <<2;
+  delay(1000);
+  PORTC = (TCCR4C&7) <<2;
+  delay(1000);*/
 
+  
 
   //Initialize serial and wait for port to open:
   //Serial.begin(9600);
@@ -100,6 +125,8 @@ void setup() {
   Serial.println("\nStarting connection to server...");
   // if you get a connection, report back via serial:
   Udp.begin(localPort);
+  /*  TCCR3B = (TCCR3B&(~0x07))|0x02;
+  TCCR4B = (TCCR4B&(~0x07))|0x02;*/
 }
 
 void loop() {
@@ -141,6 +168,10 @@ void loop() {
     MasonBot().moveStop();
     packetBuffer[0] = ' ';
   }
+ /* PORTC = (TCCR3B&7) <<2;
+  delay(1000);
+  PORTC = (TCCR4B&7) <<2;
+  delay(1000);*/
 }
 
 
