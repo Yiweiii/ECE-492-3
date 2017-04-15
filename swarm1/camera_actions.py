@@ -41,11 +41,6 @@ violet_upper = np.array([150,255,255])
 orange_lower = np.array([10, 100, 180])
 orange_upper = np.array([80,255,255])
 
-A = np.mat([[1,1,0,0],[0,1,0,0],[0,0,1,1],[0,0,0,1]])
-H = np.mat([[1,0,0,0],[0,0,1,0]])
-I = np.mat([[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]])
-R = np.mat([[10000,0],[0,10000]])
-
 class triangle:
 	def __init__(self, x1, x2, x3):
 		self.x1 = x1
@@ -123,6 +118,7 @@ def main():
 	else:
 		print "Active mode"
 		cap = cv2.VideoCapture(0)
+		cami = 0
 		while(True):
 			ret, bgr_image = cap.read()
 			cv2.imshow("cam_image", bgr_image)
@@ -145,26 +141,67 @@ def main():
 			#upper_red_hue_range = cv2.inRange(hsv_image,cv2.cv.Scalar(160,100,100),cv2.cv.Scalar(180,255,255))
 			#red_hue_image = cv2.addWeighted(lower_red_hue_range,1.0,upper_red_hue_range,1.0,0.0)
 			
-			hue_image = ID_hue_image(hsv_image, Robot1.ID, orig_image)
+			#print "\nfind BLUE YELLOW YELLOW"
+			#find_robot(hsv_image,orig_image, BLUE,BLUE,YELLOW, Robot1)
+			print "\nfind YELLOW YELLOW YELLOW"
+			find_robot(hsv_image,orig_image, YELLOW,YELLOW,YELLOW, Robot1)
+			#print "\nfind BLUE BLUE BLUE"
+			#find_robot(hsv_image,orig_image, BLUE,BLUE,BLUE, Robot1)
+			#print "\nfind RED RED RED"
+			#find_robot(hsv_image,orig_image, RED,RED,RED, Robot1)
+			#print "\nfind GREEN GREEN GREEN"
+			#find_robot(hsv_image,orig_image, GREEN,GREEN,GREEN, Robot1)
+
+
 			#hue_image2 = ID_hue_image(hsv_image, Robot2.ID, orig_image)
 					
 			#track_robot(hue_image, orig_image, Robot1)
-			cv2.imshow("hue",hue_image)
-			acquire_locations(hue_image, Robot1)
+			#cv2.imshow("hue",hsv_image)
+			#acquire_locations(hue_image, Robot1)
 			#acquire_locations(hue_image2, Robot2)
-			#time.sleep(1)
-			  
+			time.sleep(0.04)
+			print(cami)
+			cami = cami + 1
+			if cami == 500:
+				break
 			if cv2.waitKey(1) & 0xFF == ord('q'):
 				break
 
 		cap.release()
 		cv2.destroyAllWindows()
 
-
+def acquire_obstacles(img, Map, max_height):
+	Walls = []
+	hue_image = ID_hue_image(img, YELLOW, img)
+	#cv2.imshow("img", hue_image)
+	#cv2.waitKey(0)
+	cnts = cv2.findContours(hue_image.copy(),cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)[-2]
+	print "\nlen(cnts) : %d" % len(cnts)
+	for i in range(0,len(cnts)):
+		c = cnts[i]
+		x,y,w,h = cv2.boundingRect(c)
+		print "x : %d y : %d w : %d h : %d" % (x,y,w,h)
+		
+		j = int(round(w/max_height))
+		k = int(round(h/max_height))
+		l = int(round(x/max_height))
+		m = int(round(y/max_height))
+		print(m)
+		
+		for z in range(0, j):
+			p = (l+z,m)
+			Walls.append(p)
+		for q in range(0, k):
+			p = (l,m+q)
+			Walls.append(p)
+	print(Walls)		
+	Map.walls = Walls
+	
+	
 def find_robot(hsv_image, orig_image,color1, color2, color3, robot):
 	found = False
 	hue_image_1 = ID_hue_image(hsv_image, color1, orig_image)
-	cnts = cv2.findContours(hue_image_1.copy(),cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)[-2]
+	cnts = cv2.findContours(hue_image_1.copy(),cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)[-2]
 	points_array_1 = []
 	final_coordinates = []
 	for i in range(0, len(cnts)):
@@ -177,7 +214,7 @@ def find_robot(hsv_image, orig_image,color1, color2, color3, robot):
 		final_coordinates.append(T)
 	#print (points_array_1)
 	hue_image_2 = ID_hue_image(hsv_image, color2, orig_image)
-	cnts = cv2.findContours(hue_image_2.copy(),cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)[-2]
+	cnts = cv2.findContours(hue_image_2.copy(),cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)[-2]
 	points_array_2 = []
 	for i in range(0, len(cnts)):
 		c = cnts[i]
@@ -187,7 +224,9 @@ def find_robot(hsv_image, orig_image,color1, color2, color3, robot):
 		points_array_2.append((a,b))
 	#print (points_array_2)
 	hue_image_3 = ID_hue_image(hsv_image, color3, orig_image)
-	cnts = cv2.findContours(hue_image_3.copy(),cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)[-2]
+	cnts = cv2.findContours(hue_image_3.copy(),cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)[-2]
+	#cv2.imshow("hue", hue_image_3)
+	#cv2.waitKey(0)
 	points_array_3 = []
 	for i in range(0, len(cnts)):
 		c = cnts[i]
@@ -196,7 +235,14 @@ def find_robot(hsv_image, orig_image,color1, color2, color3, robot):
 		b = int(M["m01"] / M["m00"])
 		points_array_3.append((a,b))
 	#print (points_array_3)
-	
+	if len(points_array_1) < 3:
+		return
+	elif len(points_array_2) < 3:
+		return
+	elif len(points_array_3) < 3:
+		return
+		
+	print(len(points_array_2))
 	for i in range(0,len(points_array_1)):
 		d = 0
 		distances_1 = []
@@ -223,7 +269,7 @@ def find_robot(hsv_image, orig_image,color1, color2, color3, robot):
 		final_coordinates[i].x2 = points_array_2[index]
 		final_coordinates[i].d1 = min_value
 
-	#print(len(points_array_3))
+	print(len(points_array_3))
 	for i in range(0,len(points_array_1)):
 		d = 0
 		distances_2 = []
@@ -278,35 +324,6 @@ def find_robot(hsv_image, orig_image,color1, color2, color3, robot):
 	if found == False:
 		print "\nRobot not found"
 	
-def track_robot(img, orig_image, robot):
-	circles = cv2.HoughCircles(img,cv2.cv.CV_HOUGH_GRADIENT,1,15,
-								param1=10,param2=20, minRadius=0,maxRadius=0)
-	output = img.copy()
-	coordinates = [[0 for x in range(2)] for y in range(3)] 
-	if circles is not None:
-		#print "Robot detected"
-		circles = np.round(circles[0,:]).astype("int")
-		i = 0
-		#print "len circles: %d" % len(circles)
-		if len(circles) != 0:
-			for (x,y,r) in circles:
-				#print "Circle %d: %d y: %d r: %d" %(i,x,y,r)
-				coordinates[i][0] = x
-				coordinates[i][1] = y
-				#cv2.circle(orig_image,(x,y),r,(0,255,0),4)
-				#cv2.rectangle(orig_image, (x - 5, y - 5), (x + 5, y + 5), (0, 128, 255), -1)
-				i = i + 1
-			
-			Robotx, Roboty, Robotdir = thetacalc_n(coordinates[0], coordinates[1], coordinates[2])
-			print "Robot x: %d y: %d dir : %d" %(Robotx, Roboty, Robotdir)
-			robot.setPos(Robotx,Roboty,Robotdir)
-		else:
-			print "Error occured"
-	else:
-		print "Circles not found"
-		
-	#cv2.imshow("output", orig_image)
-	#cv2.waitKey(0)
 def thetacalc_n(a,b,c):
 	final_x = a[0]
 	final_y = a[1]
@@ -392,8 +409,6 @@ def thetacalc(a, b, c):
 	
 	return final_x, final_y, degrees
 	
-	
-
 def acquire_locations(img, robot):
 	coordinates = [[0 for x in range(2)] for y in range(3)] 
 	#cnts = cv2.findContours(img.copy(),cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)[-2]
@@ -422,11 +437,7 @@ def acquire_locations(img, robot):
 	else:
 		print "Robot :%d not in camera-view" % robot.ID
 		return False
-		
 
-	
-
-	
 def path_finding(Map, robot, goals):
 	cost = np.zeros(len(goals),dtype="int64")
 	path = [{} for _ in range(len(goals))]

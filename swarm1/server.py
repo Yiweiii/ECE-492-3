@@ -4,20 +4,20 @@ from Rendevous import rendezvous
 from direction import direction
 import sys
 import math
-import camera_actions as ca
+from camera_actions import *
 import cv2
 import time
 
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 
 #fourcc = cv2.cv.CV_FOURCC('X','V','I','D')
 video_writer = cv2.VideoWriter("output3.avi", -1, 20, (640, 480))
 
 ##Create four robots
-robot1 = Robot(ca.BLUE)  # Blue
-robot2 = Robot(ca.GREEN)  # Green
-robot3 = Robot(ca.RED)    # Red
-robot4 = Robot(ca.YELLOW) # Yellow
+robot1 = Robot(BLUE)  # Blue
+robot2 = Robot(GREEN)  # Green
+robot3 = Robot(RED)    # Red
+robot4 = Robot(YELLOW) # Yellow
 
 #Current map
 # Robot1 F8:F0:05:F1:D6:1C  - .6 - blue
@@ -66,33 +66,26 @@ a2 = 1
 a3 = 1
 a4 = 1
 
-
 while True:
     ret, bgr_image = cap.read()
     cv2.imshow("cam_image", bgr_image)
     orig_image = bgr_image.copy()
     bgr_image = cv2.medianBlur(bgr_image, 3)
     hsv_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2HSV)
-    hue_image = ca.ID_hue_image(hsv_image, robot1.ID, orig_image) # Blue
-    #cv2.imshow("hue",hue_image)
-    hue_image2 = ca.ID_hue_image(hsv_image, robot2.ID, orig_image) # Green
-    hue_image3 = ca.ID_hue_image(hsv_image, robot3.ID, orig_image) # Red
-    hue_image4 = ca.ID_hue_image(hsv_image, robot4.ID, orig_image) #Yellow
+
     robot_in_view =  True
-    ca.acquire_locations(hue_image, robot1)
-    ca.acquire_locations(hue_image2, robot2)
-    ca.acquire_locations(hue_image3, robot3)
-    ca.acquire_locations(hue_image4, robot4)
+	
+    find_robot(hsv_image, orig_image, BLUE, BLUE, BLUE, robot1)
+    find_robot(hsv_image, orig_image, GREEN, GREEN, GREEN, robot2)
+    find_robot(hsv_image, orig_image, RED, RED, RED, robot3)
+    find_robot(hsv_image, orig_image, YELLOW, YELLOW, YELLOW, robot4)
+	
     video_writer.write(bgr_image)
 
     if robot_in_view:
 
-        print(i)
-        #print "Robot 1 x:%d y:%d dir:%d" % (robot1.xpos, robot1.ypos, robot1.dir)
-        #print "Robot 2 x:%d y:%d dir:%d" % (robot2.xpos, robot2.ypos, robot2.dir)
-        #print "Robot 3 x:%d y:%d dir:%d" % (robot3.xpos, robot3.ypos, robot3.dir)
-
-        #(xpos1, ypos1, angle1) = rendezvous(robot1, robot2, robot3)
+        print "i :%d" % i
+		
         if i == 500:
             MESSAGE = 'stop'
             udpSerSock.sendto(MESSAGE, ADDR1)
@@ -104,14 +97,16 @@ while True:
             video_writer.release()
             exit(0)
 
-        (xpos1, ypos1, angle1) = rendezvous(robot1, robot2, robot3) #blue
-        (xpos2, ypos2, angle2) = rendezvous(robot2, robot1, robot4) #green
-        (xpos3, ypos3, angle3) = rendezvous(robot3, robot4, robot1) #red
-        (xpos4, ypos4, angle4) = rendezvous(robot4, robot3, robot2)  # Yellow
+        (xpos1, ypos1, angle1) = rendezvous(robot1, robot2, robot1) #blue
+        (xpos2, ypos2, angle2) = rendezvous(robot2, robot1, robot2) #green
+        (xpos3, ypos3, angle3) = rendezvous(robot3, robot4, robot3) #red
+        (xpos4, ypos4, angle4) = rendezvous(robot4, robot3, robot4)  # Yellow
+		
         (MESSAGE1, rotcount1, fwdcount1, a1) = direction(robot1, xpos1, ypos1, angle1, rotcount1, fwdcount1, a1)
         (MESSAGE2, rotcount2, fwdcount2, a2) = direction(robot2, xpos2, ypos2, angle2, rotcount2, fwdcount2, a2)
         (MESSAGE3, rotcount3, fwdcount3, a3) = direction(robot3, xpos3, ypos3, angle3, rotcount3, fwdcount3, a3)
         (MESSAGE4, rotcount4, fwdcount4, a4) = direction(robot4, xpos4, ypos4, angle4, rotcount4, fwdcount4, a4)
+		
         print("robot1blue", MESSAGE1, robot1.xpos, robot1.ypos, xpos1, ypos1, robot1.dir, angle1)
         print("robot2green", MESSAGE2, robot2.xpos, robot2.ypos, xpos2, ypos2, robot2.dir, angle2)
         print("robot3red", MESSAGE3, robot3.xpos, robot3.ypos, xpos3, ypos3, robot3.dir, angle3)
