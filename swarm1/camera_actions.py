@@ -235,12 +235,6 @@ def find_robot(hsv_image, orig_image,color1, color2, color3, robot):
 		b = int(M["m01"] / M["m00"])
 		points_array_3.append((a,b))
 	#print (points_array_3)
-	if len(points_array_1) < 3:
-		return
-	elif len(points_array_2) < 3:
-		return
-	elif len(points_array_3) < 3:
-		return
 		
 	print(len(points_array_2))
 	for i in range(0,len(points_array_1)):
@@ -255,6 +249,9 @@ def find_robot(hsv_image, orig_image,color1, color2, color3, robot):
 			b = (points_array_2[j][0], points_array_2[j][1])
 			x_d = math.sqrt((a[0]-b[0])**2 + (a[1] - b[1])**2)
 			distances_1.append(x_d)
+		if len(distances_1) == 0:
+			print "error occured in localization"
+			return
 		min_index, min_value = min(enumerate(distances_1), key=operator.itemgetter(1))
 		#print(i)
 		#print "min_index : %d" %min_index
@@ -285,6 +282,9 @@ def find_robot(hsv_image, orig_image,color1, color2, color3, robot):
 			b = (points_array_3[j][0], points_array_3[j][1])
 			x_d = math.sqrt((a[0]-b[0])**2 + (a[1] - b[1])**2)
 			distances_2.append(x_d)
+		if len(distances_2) == 0:
+			print "Error occured in localization"
+			return
 		min_index, min_value = min(enumerate(distances_2), key=operator.itemgetter(1))
 		#print(points_array_3)
 		if min_index < i :
