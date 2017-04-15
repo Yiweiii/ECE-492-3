@@ -97,10 +97,10 @@ while True:
             video_writer.release()
             exit(0)
 
-        (xpos1, ypos1, angle1) = rendezvous(robot1, robot2, robot1) #blue
-        (xpos2, ypos2, angle2) = rendezvous(robot2, robot1, robot2) #green
-        (xpos3, ypos3, angle3) = rendezvous(robot3, robot4, robot3) #red
-        (xpos4, ypos4, angle4) = rendezvous(robot4, robot3, robot4)  # Yellow
+        (xpos1, ypos1, angle1) = rendezvous(robot1, robot2, robot3) #blue
+        (xpos2, ypos2, angle2) = rendezvous(robot2, robot1, robot4) #green
+        (xpos3, ypos3, angle3) = rendezvous(robot3, robot4, robot1) #red
+        (xpos4, ypos4, angle4) = rendezvous(robot4, robot3, robot2)  # Yellow
 		
         (MESSAGE1, rotcount1, fwdcount1, a1) = direction(robot1, xpos1, ypos1, angle1, rotcount1, fwdcount1, a1)
         (MESSAGE2, rotcount2, fwdcount2, a2) = direction(robot2, xpos2, ypos2, angle2, rotcount2, fwdcount2, a2)
