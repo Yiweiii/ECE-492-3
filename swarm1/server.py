@@ -102,20 +102,20 @@ while True:
 		udpSerSock.close()
 		exit(0)
 
-	(xpos1, ypos1, angle1) = rendezvous(robot1, robot2, robot3) #blue
-	(xpos2, ypos2, angle2) = rendezvous(robot2, robot3, robot4) #green
-	(xpos3, ypos3, angle3) = rendezvous(robot3, robot4, robot1) #red
-	(xpos4, ypos4, angle4) = rendezvous(robot4, robot1, robot2) #yellow
+	(xpos1, ypos1, angle1) = rendezvous(ROBOTS[0], ROBOTS[1], ROBOTS[2]) #blue
+	(xpos2, ypos2, angle2) = rendezvous(ROBOTS[1], ROBOTS[2], ROBOTS[3]) #green
+	(xpos3, ypos3, angle3) = rendezvous(ROBOTS[2], ROBOTS[3], ROBOTS[0]) #red
+	(xpos4, ypos4, angle4) = rendezvous(ROBOTS[3], ROBOTS[0], ROBOTS[1]) #yellow
 			
-	(MESSAGE1, rotcount1, fwdcount1, a1) = direction(robot1, xpos1, ypos1, angle1, rotcount1, fwdcount1, a1)
-	(MESSAGE2, rotcount2, fwdcount2, a2) = direction(robot2, xpos2, ypos2, angle2, rotcount2, fwdcount2, a2)
-	(MESSAGE3, rotcount3, fwdcount3, a3) = direction(robot3, xpos3, ypos3, angle3, rotcount3, fwdcount3, a3)
-	(MESSAGE4, rotcount4, fwdcount4, a4) = direction(robot4, xpos4, ypos4, angle4, rotcount4, fwdcount4, a4)
+	(MESSAGE1, rotcount1, fwdcount1, a1) = direction(ROBOTS[0], xpos1, ypos1, angle1, rotcount1, fwdcount1, a1)
+	(MESSAGE2, rotcount2, fwdcount2, a2) = direction(ROBOTS[1], xpos2, ypos2, angle2, rotcount2, fwdcount2, a2)
+	(MESSAGE3, rotcount3, fwdcount3, a3) = direction(ROBOTS[2], xpos3, ypos3, angle3, rotcount3, fwdcount3, a3)
+	(MESSAGE4, rotcount4, fwdcount4, a4) = direction(ROBOTS[3], xpos4, ypos4, angle4, rotcount4, fwdcount4, a4)
 	
-	print("robot1blue", MESSAGE1, robot1.xpos, robot1.ypos, xpos1, ypos1, robot1.dir, angle1)
-	print("robot2green", MESSAGE2, robot2.xpos, robot2.ypos, xpos2, ypos2, robot2.dir, angle2)
-	print("robot3red", MESSAGE3, robot3.xpos, robot3.ypos, xpos3, ypos3, robot3.dir, angle3)
-	print("robot4Yellow", MESSAGE4, robot4.xpos, robot4.ypos, xpos4, ypos4, robot4.dir, angle4)
+	print("robot1blue", MESSAGE1, ROBOTS[0].xpos, ROBOTS[0].ypos, xpos1, ypos1, ROBOTS[0].dir, angle1)
+	print("robot2green", MESSAGE2, ROBOTS[1].xpos, ROBOTS[1].ypos, xpos2, ypos2, ROBOTS[1].dir, angle2)
+	print("robot3red", MESSAGE3, ROBOTS[2].xpos, ROBOTS[2].ypos, xpos3, ypos3, ROBOTS[2].dir, angle3)
+	print("robot4Yellow", MESSAGE4, ROBOTS[3].xpos, ROBOTS[3].ypos, xpos4, ypos4, ROBOTS[3].dir, angle4)
 	
 	if (MESSAGE1 != currMESSAGE1):
 		udpSerSock.sendto(MESSAGE1, ADDR[0])
