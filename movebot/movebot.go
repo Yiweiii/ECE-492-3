@@ -1,3 +1,5 @@
+// Robot move program
+// Manually controls robots
 package main
 
 import (
@@ -68,9 +70,42 @@ func searchForMAC() map[int]string {
 	return rList
 }
 
+func drawText(x, y int, s string, fg, bg termbox.Attribute) {
+	for i, v := range s {
+		termbox.SetCell(x+i, y, v, fg, bg)
+	}
+	errHandle(termbox.Flush())
+}
+
+func drawList(rList map[int]string, sel, status, nbots int) {
+	voff := 2
+	hbg := termbox.ColorBlue
+	sbg := termbox.ColorRed
+	cbg := termbox.ColorDefault
+	for k := 0; k < nbots; k++ {
+		if k == sel {
+			if status == 1 {
+				cbg = sbg
+			} else {
+				cbg = hbg
+			}
+		} else {
+			cbg = termbox.ColorDefault
+		}
+		if r, exist := rList[k]; exist == true {
+			drawText(10, k+voff, r, termbox.ColorWhite, cbg)
+			drawText(0, k+voff, "Robot "+strconv.Itoa(k)+":", termbox.ColorWhite, cbg)
+		} else {
+			drawText(10, k+voff, "-----------", termbox.ColorWhite, cbg)
+		}
+	}
+}
+
 func main() {
 	robot := searchForMAC()
 	errHandle(termbox.Init())
+	nbots := 10
+	//width, height := termbox.Size()
 	defer termbox.Close()
 	termbox.SetInputMode(termbox.InputEsc)
 	errHandle(termbox.Clear(termbox.ColorDefault, termbox.ColorDefault))
@@ -81,6 +116,10 @@ func main() {
 
 	conn, err := net.DialUDP("udp", nil, robotAddr)
 	errHandle(err)
+	status := 0
+	sel := 0
+	drawList(robot, sel, status, nbots)
+	drawText(0, 0, "Robot Controller. Press 'Enter' to select robot. Arrow keys control robot. Press 's' is stop all robots.", termbox.ColorWhite, termbox.ColorDefault)
 
 myLoop:
 	for {
@@ -88,28 +127,63 @@ myLoop:
 		case termbox.EventKey:
 			switch event.Key {
 			case termbox.KeyEsc:
-				break myLoop
+				if status == 0 {
+					break myLoop
+				} else {
+					status--
+				}
 			case termbox.KeyArrowLeft:
-				fmt.Fprintf(conn, "A128")
+				if status == 1 {
+					fmt.Fprintf(conn, "A128")
+				}
 			case termbox.KeyArrowRight:
-				fmt.Fprintf(conn, "a128")
+				if status == 1 {
+					fmt.Fprintf(conn, "a128")
+				}
 			case termbox.KeyArrowUp:
-				fmt.Fprintf(conn, "f255")
+				if status == 1 {
+					fmt.Fprintf(conn, "f255")
+				} else {
+					if sel > 0 {
+						sel--
+					}
+				}
 			case termbox.KeyArrowDown:
-				fmt.Fprintf(conn, "s")
-			default:
-				if event.Ch != 0 {
-					num := int(event.Ch - 48)
-					if num >= 1 && num <= 4 {
+				if status == 1 {
+					fmt.Fprintf(conn, "s")
+				} else {
+					if sel < nbots-1 {
+						sel++
+					}
+				}
+			case termbox.KeyEnter:
+				if status == 0 {
+					if rs, exist := robot[sel]; exist == true {
+						status++
 						conn.Close()
-						robotAddr, err := net.ResolveUDPAddr("udp", robot[num]+":2390")
+						robotAddr, err := net.ResolveUDPAddr("udp", rs+":2390")
 						errHandle(err)
 
 						conn, err = net.DialUDP("udp", nil, robotAddr)
 						errHandle(err)
 					}
 				}
+			default:
+				if event.Ch != 0 {
+					if event.Ch == 's' {
+						for _, v := range robot {
+							conn.Close()
+							robotAddr, err := net.ResolveUDPAddr("udp", v+":2390")
+							errHandle(err)
+							conn, err = net.DialUDP("udp", nil, robotAddr)
+							errHandle(err)
+							fmt.Fprintf(conn, "s")
+						}
+						status = 0
+					}
+				}
 			}
+			drawList(robot, sel, status, nbots)
 		}
 	}
 	conn.Close()
