@@ -1,5 +1,5 @@
 // MasonBot Arduino library
-// 3/3/2017
+// 4/16/2017
 
 #include "Arduino.h"
 #include "masonbot.h"
@@ -104,6 +104,42 @@ void MasonBot::moveRotateCW(int velocity){
 
 void MasonBot::moveStop(){
 	_stop_all_motors();  //stop
+}
+
+void MasonBot::runForward(int *count){
+	*count = 0;
+	Serial.println(*count);
+	while (*count < 9){
+		moveForward(120);
+	}
+	_stop_all_motors();  
+}
+
+void MasonBot::controlRun(int *count, float Xloc, float Yloc, float Thetaloc, float Xexpected, float Yexpected, float Thetaexpected){
+	int velocity;
+	float mag = sqrt(pow(Xloc - Xexpected, 2) + pow(Yloc - Yexpected,2));
+	
+	// mag is in meters .23 meters for 8 counts
+	float countmax = ((mag/.223) * 8);
+	float rotmag = Thetaexpected - Thetaloc;
+	rotmag = abs(rotmag);
+	float countmaxrot = (rotmag/120) * 8;
+	*count = 0;
+	while (*count < countmaxrot){
+		velocity = (int)( 75 + 2.25*(countmaxrot - *count));
+		moveRotateCW(velocity);
+		Serial.println(velocity);
+	}  
+	*count = 0;
+     Serial.println(countmax);
+	while (*count < countmax){
+		velocity = (int)(75 + (countmax - *count));	
+		if (velocity > 225) 	
+			velocity = 225;
+		moveForward(velocity);
+		Serial.println(*count);
+	}
+	_stop_all_motors();
 }
 
 void MasonBot::_robo_move(int x, int y, int w, int velocity){
