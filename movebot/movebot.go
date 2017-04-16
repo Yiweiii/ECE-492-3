@@ -119,7 +119,8 @@ func main() {
 	status := 0
 	sel := 0
 	drawList(robot, sel, status, nbots)
-	drawText(0, 0, "Robot Controller. Press 'Enter' to select robot. Arrow keys control robot. Press 's' is stop all robots.", termbox.ColorWhite, termbox.ColorDefault)
+	drawText(0, 0, "Robot Controller. Press 'Enter' to select robot. Arrow keys control robot.", termbox.ColorWhite, termbox.ColorDefault)
+	drawText(0, 1, "Press 's' is stop all robots.", termbox.ColorWhite, termbox.ColorDefault)
 
 myLoop:
 	for {
