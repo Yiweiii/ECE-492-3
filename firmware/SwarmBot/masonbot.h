@@ -58,6 +58,12 @@
 #define M2 2
 #define M3 3
 
+#define L_PWR 1
+#define L_WIFI 2
+#define L_A 4
+#define L_B 8
+#define L_C 16
+
 
 class MasonBot {
 	public:
