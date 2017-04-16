@@ -8,7 +8,7 @@ from camera_actions import *
 import cv2
 import time
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 #fourcc = cv2.cv.CV_FOURCC('X','V','I','D')
 video_writer = cv2.VideoWriter("output3.avi", -1, 20, (640, 480))
@@ -29,8 +29,8 @@ robot4 = Robot(YELLOW) # Yellow
 
 HOST1 = '192.168.1.6' # blue robot
 HOST2 = '192.168.1.2' # green robot
-HOST3 = '192.168.1.4' # red robot
-HOST4 = '192.168.1.5' # Yellow Robot
+HOST3 = '192.168.1.5' # red robot
+HOST4 = '192.168.1.4' # Yellow Robot
 
 PORT = 2390
 BUFSIZE = 1024
@@ -91,6 +91,7 @@ while True:
             udpSerSock.sendto(MESSAGE, ADDR1)
             udpSerSock.sendto(MESSAGE, ADDR2)
             udpSerSock.sendto(MESSAGE, ADDR3)
+            udpSerSock.sendto(MESSAGE, ADDR4)
             cap.release()
             cv2.destroyAllWindows()
             udpSerSock.close()
@@ -124,7 +125,6 @@ while True:
         if (MESSAGE4 != currMESSAGE4):
             udpSerSock.sendto(MESSAGE4, ADDR4)
             currMESSAGE4 = MESSAGE4
-
         i = i + 1
     # try:
     # print(data)
@@ -157,7 +157,7 @@ while True:
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-        # time.sleep(1)
+
 
 cap.release()
 video_writer.release()

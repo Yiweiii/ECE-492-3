@@ -143,7 +143,7 @@ def main():
 			
 			#print "\nfind BLUE YELLOW YELLOW"
 			#find_robot(hsv_image,orig_image, BLUE,BLUE,YELLOW, Robot1)
-			print "\nfind YELLOW YELLOW YELLOW"
+			#print "\nfind YELLOW YELLOW YELLOW"
 			find_robot(hsv_image,orig_image, YELLOW,YELLOW,YELLOW, Robot1)
 			#print "\nfind BLUE BLUE BLUE"
 			#find_robot(hsv_image,orig_image, BLUE,BLUE,BLUE, Robot1)
@@ -160,7 +160,7 @@ def main():
 			#acquire_locations(hue_image, Robot1)
 			#acquire_locations(hue_image2, Robot2)
 			time.sleep(0.04)
-			print(cami)
+			#print(cami)
 			cami = cami + 1
 			if cami == 500:
 				break
@@ -176,17 +176,17 @@ def acquire_obstacles(img, Map, max_height):
 	#cv2.imshow("img", hue_image)
 	#cv2.waitKey(0)
 	cnts = cv2.findContours(hue_image.copy(),cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)[-2]
-	print "\nlen(cnts) : %d" % len(cnts)
+	#print "\nlen(cnts) : %d" % len(cnts)
 	for i in range(0,len(cnts)):
 		c = cnts[i]
 		x,y,w,h = cv2.boundingRect(c)
-		print "x : %d y : %d w : %d h : %d" % (x,y,w,h)
+		# "x : %d y : %d w : %d h : %d" % (x,y,w,h)
 		
 		j = int(round(w/max_height))
 		k = int(round(h/max_height))
 		l = int(round(x/max_height))
 		m = int(round(y/max_height))
-		print(m)
+		#print(m)
 		
 		for z in range(0, j):
 			p = (l+z,m)
@@ -194,7 +194,7 @@ def acquire_obstacles(img, Map, max_height):
 		for q in range(0, k):
 			p = (l,m+q)
 			Walls.append(p)
-	print(Walls)		
+	#print(Walls)
 	Map.walls = Walls
 	
 	
@@ -236,7 +236,7 @@ def find_robot(hsv_image, orig_image,color1, color2, color3, robot):
 		points_array_3.append((a,b))
 	#print (points_array_3)
 		
-	print(len(points_array_2))
+	#print(len(points_array_2))
 	for i in range(0,len(points_array_1)):
 		d = 0
 		distances_1 = []
@@ -266,7 +266,7 @@ def find_robot(hsv_image, orig_image,color1, color2, color3, robot):
 		final_coordinates[i].x2 = points_array_2[index]
 		final_coordinates[i].d1 = min_value
 
-	print(len(points_array_3))
+	#print(len(points_array_3))
 	for i in range(0,len(points_array_1)):
 		d = 0
 		distances_2 = []
@@ -312,13 +312,13 @@ def find_robot(hsv_image, orig_image,color1, color2, color3, robot):
 		if (color2 != color3):
 			check = isLeft(final_coordinates[i].x1,x1,final_coordinates[i].x2)
 		if ((abs(d1 - d2) < 5) and check):
-			print ("\nRobot found")
-			print "d1: %d d2: %d" % (d1,d2)
-			print(X)
+			#print ("\nRobot found")
+			#print "d1: %d d2: %d" % (d1,d2)
+			#print(X)
 			found = True
 			Robotx, Roboty, Robotdir = thetacalc(final_coordinates[i].x1,final_coordinates[i].x2, final_coordinates[i].x3)
 			robot.setPos(Robotx, Roboty, Robotdir)
-			print "Robot x: %d y: %d dir : %d" %(robot.xpos, robot.ypos, robot.dir)
+			#print "Robot x: %d y: %d dir : %d" %(robot.xpos, robot.ypos, robot.dir)
 			break
 	
 	if found == False:

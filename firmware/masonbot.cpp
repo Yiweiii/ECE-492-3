@@ -86,6 +86,7 @@ int MasonBot::_read_battery() {
 	return result;
 }
 
+
 int MasonBot::getBatteryPower() {
 	// Not sure if this is right....
 	
@@ -104,6 +105,13 @@ void MasonBot::moveRotateCW(int velocity){
 
 void MasonBot::moveStop(){
 	_stop_all_motors();  //stop
+}
+void MasonBot::runForward(int *count){
+	*count = 0;
+	if *count < 8
+		moveForward(128);
+	else
+		moveStop();
 }
 
 void MasonBot::_robo_move(int x, int y, int w, int velocity){

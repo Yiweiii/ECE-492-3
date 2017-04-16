@@ -51,7 +51,7 @@ def direction(robot, xpos, ypos, angle, rotcount, fwdcount, a):
         if rotcount == 1:
             a = (angle - robot.dir + 360) % 360
             rotcount = 2
-        if a <= 180:
+        if a >= 180:
             message = 'a' + str(rotmag)
         else:
             message = 'A' + str(rotmag)
