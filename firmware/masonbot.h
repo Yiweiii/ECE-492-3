@@ -31,13 +31,13 @@
  *
  * IR receivers are put on interrupt lines.
  */
-#define _ir_en_1 28
-#define _ir_en_2 29
-#define _ir_en_3 30
+#define _ir_en_1 11
+#define _ir_en_2 12
+#define _ir_en_3 13
 
-#define _ir_read_1 2
-#define _ir_read_2 3
-#define _ir_read_3 18
+#define _ir_read_1 19
+#define _ir_read_2 20
+#define _ir_read_3 21
 
 /* Battery check pins */
 #define _battery_read A0 // Analog in header?
@@ -60,6 +60,8 @@ class MasonBot {
 		void moveRotateCCW(int velocity);
 		void moveRotateCW(int velocity);
 		void moveStop();
+		void runForward(int *count);
+		void controlRun(int *count, float Xloc,float Yloc, float thetaloc, float Xexpected, float Yexpected, float thetaexpected);
 
 
 
