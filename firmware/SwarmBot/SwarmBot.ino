@@ -36,6 +36,7 @@ int status = WL_IDLE_STATUS;
 
 char ssid[] = "QCHJB"; //  your network SSID (name) // IP address 192.168.43.95(may change)
 char pass[] = "robotsarecool2!";
+char mac[6];
 
 int keyIndex = 1;            // your network key Index number (needed only for WEP)
 
@@ -105,7 +106,7 @@ void setup() {
   if (WiFi.status() == WL_NO_SHIELD) {
     DDRC = 0xFF;
     PORTC = 0xFF;
-    Serial.println("WiFi shield not present");
+    //Serial.println("WiFi shield not present");
     // don't continue:
     while (true);
   }
@@ -114,20 +115,21 @@ void setup() {
   while ( status != WL_CONNECTED) {
     DDRC = 0xFF;
     PORTC = 0x03;
-    Serial.print("Attempting to connect to SSID: ");
-    Serial.println(ssid);
+    //Serial.print("Attempting to connect to SSID: ");
+    //Serial.println(ssid);
     // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
     status = WiFi.begin(ssid, pass);
 
     // wait 10 seconds for connection:
     delay(5000);
   }
-  Serial.println("Connected to wifi");
+ // Serial.println("Connected to wifi");
   printWiFiStatus();
 
-  Serial.println("\nStarting connection to server...");
+  //Serial.println("\nStarting connection to server...");
   // if you get a connection, report back via serial:
   Udp.begin(localPort);
+  WiFi.macAddress(mac);
   /*  TCCR3B = (TCCR3B&(~0x07))|0x02;
   TCCR4B = (TCCR4B&(~0x07))|0x02;*/
 }
@@ -168,6 +170,11 @@ void loop() {
   }else if(packetBuffer[0] == 's'){
         MasonBot().moveStop();
          packetBuffer[0] = ' ';
+  }else if(packetBuffer[0] == 'm'){
+       Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
+        Udp.write(mac, 6);
+        Udp.endPacket();
+        packetBuffer[0] = ' ';
   }
 }
 
