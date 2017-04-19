@@ -75,8 +75,9 @@ class MasonBot {
 		void moveRotateCCW(int velocity);
 		void moveRotateCW(int velocity);
 		void moveStop();
-
-
+		void runForward(int *count);
+		void feedbackRun(float Xloc, float Yloc, int thetaloc, float Xexpected, float Yexpected, int thetaexpected);
+		void controlRun(int *count, float Xloc,float Yloc, float thetaloc, float Xexpected, float Yexpected, float thetaexpected);
 
 
 	private:

@@ -111,6 +111,83 @@ void MasonBot::moveStop() {
 	_stop_all_motors();  //stop
 }
 
+void MasonBot::runForward(int *count){
+	*count = 0;
+	Serial.println(*count);
+	while (*count < 9){
+		moveForward(120);
+	}
+	_stop_all_motors();  
+}
+
+void MasonBot::feedbackRun(float Xloc, float Yloc, int Thetaloc, float Xexpected, float Yexpected, int Thetaexpected){
+	int velocity;
+	int direction;
+	float dirchoice;
+	int rotmag2;
+	float mag = sqrt(pow(Xloc - Xexpected, 2) + pow(Yloc - Yexpected,2));
+	// mag is in meters
+	int rotmag = Thetaexpected - Thetaloc;
+	dirchoice = (rotmag + 360) % 360;
+	rotmag = abs(rotmag);
+	if (rotmag > 180)
+	    rotmag = abs(360 - rotmag); 
+	//rotmag is in degrees
+	if (rotmag > 10 and mag > .10){
+		velocity = 50 + (.72*rotmag);
+		if (velocity > 150){
+			velocity = 150;
+		}
+		Serial.println(rotmag2);
+		if (dirchoice >= 180){
+			Serial.println("CW"); 
+			moveRotateCW(velocity);
+		}else{
+			Serial.println("CCW");
+			moveRotateCCW(velocity); 
+		}
+	}else if( mag > .10){
+		
+		velocity = 50 + 400*(mag);
+		if (velocity > 250){
+			velocity = 250;
+		}
+		moveForward(velocity);
+	} else {
+		_stop_all_motors();		
+	}
+
+}
+
+
+void MasonBot::controlRun(int *count, float Xloc, float Yloc, float Thetaloc, float Xexpected, float Yexpected, float Thetaexpected){
+	int velocity;
+	float mag = sqrt(pow(Xloc - Xexpected, 2) + pow(Yloc - Yexpected,2));
+	
+	// mag is in meters .23 meters for 8 counts
+	float countmax = ((mag/.223) * 8);
+	float rotmag = Thetaexpected - Thetaloc;
+	rotmag = abs(rotmag);
+	float countmaxrot = (rotmag/135) * 8;
+	*count = 0;
+	while (*count < countmaxrot){
+		velocity = (int)( 75 + 5*(countmaxrot - *count));
+		moveRotateCW(velocity);
+		Serial.println(velocity);
+	}  
+	*count = 0;
+     Serial.println(countmax);
+	while (*count < countmax){
+		velocity = (int)(75 + (countmax - *count));	
+		if (velocity > 225) 	
+			velocity = 225;
+		moveForward(velocity);
+		Serial.println(*count);
+	}
+	_stop_all_motors();
+}
+
+
 void MasonBot::_robo_move(int x, int y, int w, int velocity) {
 	//matrix equation to calc. forces for each of the motors of the holonomic robot
 	double f1 = (0.58*x) - (0.33*y) + (0.33*w);
