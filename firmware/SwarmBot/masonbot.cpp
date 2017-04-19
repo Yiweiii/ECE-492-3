@@ -68,7 +68,7 @@ void MasonBot::_motor2(int speed2) {
 		digitalWrite(_motor2_pwm_A, HIGH);
 		digitalWrite(_motor2_pwm_B, HIGH);
 	}
-	//Serial.println(speed);
+	////Serial.println(speed);
 }
 
 void MasonBot::_motor3(int speed3) {
@@ -143,7 +143,7 @@ void MasonBot::feedbackRun(float Xloc, float Yloc, int Thetaloc, float Xexpected
 			Serial.println("CW"); 
 			moveRotateCW(velocity);
 		}else{
-			Serial.println("CCW");
+			////////Serial.println("CCW");
 			moveRotateCCW(velocity); 
 		}
 	}else if( mag > .10){
@@ -173,16 +173,16 @@ void MasonBot::controlRun(int *count, float Xloc, float Yloc, float Thetaloc, fl
 	while (*count < countmaxrot){
 		velocity = (int)( 75 + 5*(countmaxrot - *count));
 		moveRotateCW(velocity);
-		Serial.println(velocity);
+		//Serial.println(velocity);
 	}  
 	*count = 0;
-     Serial.println(countmax);
+     //Serial.println(countmax);
 	while (*count < countmax){
 		velocity = (int)(75 + (countmax - *count));	
 		if (velocity > 225) 	
 			velocity = 225;
 		moveForward(velocity);
-		Serial.println(*count);
+		//Serial.println(*count);
 	}
 	_stop_all_motors();
 }
