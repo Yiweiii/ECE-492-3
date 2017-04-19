@@ -37,7 +37,7 @@ var robots map[[6]byte]int = map[[6]byte]int{
 	[6]byte{0xf8, 0xf0, 0x05, 0xf7, 0xff, 0xf2}: 4,
 }
 
-func searchForMAC() map[int]string {
+func searchForMAC(status int) map[int]string {
 	buf := make([]byte, 1)   // Transmitting buffer.
 	buf2 := make([]byte, 10) // Receiving buffer.
 	macbuf := [6]byte{}
@@ -52,13 +52,19 @@ func searchForMAC() map[int]string {
 		// Also handle time-out here to prevent throwing garbage MAC address inside table.
 		if conn.Read(buf2); strings.Compare(string(buf2[0:4]), "ACK0") == 0 {
 			IP := "192.168.1." + strconv.Itoa(i)
-			fmt.Print(IP + ": ")
+			if status == 0 {
+				fmt.Print(IP + ": ")
+			}
 			conn.Read(buf2)
 			for i, _ := range buf2[0:6] {
-				fmt.Printf("%02X", buf2[5-i])
+				if status == 0 {
+					fmt.Printf("%02X", buf2[5-i])
+				}
 				macbuf[i] = buf2[5-i]
 			}
-			fmt.Println(": Robot", robots[macbuf])
+			if status == 0 {
+				fmt.Println(": Robot", robots[macbuf])
+			}
 			rList[robots[macbuf]] = IP
 		}
 		// Clear the buffer
@@ -97,15 +103,16 @@ func drawList(rList map[int]string, sel, status, nbots int) {
 			drawText(0, k+voff, "Robot "+strconv.Itoa(k)+":", termbox.ColorWhite, cbg)
 		} else {
 			drawText(10, k+voff, "-----------", termbox.ColorWhite, cbg)
+			drawText(0, k+voff, "        ", termbox.ColorWhite, cbg)
 		}
 	}
 }
 
 func main() {
-	robot := searchForMAC()
+	robot := searchForMAC(0)
 	errHandle(termbox.Init())
 	nbots := 10
-	//width, height := termbox.Size()
+	width, height := termbox.Size()
 	defer termbox.Close()
 	termbox.SetInputMode(termbox.InputEsc)
 	errHandle(termbox.Clear(termbox.ColorDefault, termbox.ColorDefault))
@@ -120,7 +127,7 @@ func main() {
 	sel := 0
 	drawList(robot, sel, status, nbots)
 	drawText(0, 0, "Robot Controller. Press 'Enter' to select robot. Arrow keys control robot.", termbox.ColorWhite, termbox.ColorDefault)
-	drawText(0, 1, "Press 's' is stop all robots.", termbox.ColorWhite, termbox.ColorDefault)
+	drawText(0, 1, "Press 's' is stop all robots. Press 'r' to search network.", termbox.ColorWhite, termbox.ColorDefault)
 
 myLoop:
 	for {
@@ -181,6 +188,11 @@ myLoop:
 							fmt.Fprintf(conn, "s")
 						}
 						status = 0
+					} else if event.Ch == 'r' {
+						status = 0
+						drawText((width/2)-5, height/2, "Searching...", termbox.ColorWhite, termbox.ColorBlue)
+						robot = searchForMAC(1)
+						drawText((width/2)-5, height/2, "            ", termbox.ColorWhite, termbox.ColorDefault)
 					}
 				}
 			}
