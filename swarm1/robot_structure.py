@@ -1,9 +1,13 @@
 class Robot:
-    def __init__(self, ID):
-        self.xpos = 0
-        self.ypos = 0
-        self.dir = 0
-        self.ID = ID
+    def __init__(self, c1,c2,c3):
+		self.xpos = 0
+		self.ypos = 0
+		self.dir = 0
+		self.c1 = c1
+		self.c2 = c2
+		self.c3 = c3
+		self.inview = False
+		self.HOST = ''
 
     def displayRobot(self):
         print

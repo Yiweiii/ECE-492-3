@@ -35,8 +35,8 @@ blue_upper = np.array([140,255,255])
 yellow_lower = np.array([25,100,100])
 yellow_upper = np.array([60,255,255])
 
-violet_lower = np.array([120,60,95])
-violet_upper = np.array([150,255,255])
+violet_lower = np.array([60,100,0])
+violet_upper = np.array([255,255,255])
 
 orange_lower = np.array([10, 100, 180])
 orange_upper = np.array([80,255,255])
@@ -97,21 +97,8 @@ def main():
 		bgr_image = cv2.medianBlur(bgr_image, 3)
 		hsv_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2HSV)
 		
-		Robot1 = rs.Robot(int(sys.argv[2]))
+		#Robot1 = rs.Robot(int(sys.argv[2]))
 		#print "Robot ID: %d" % (Robot1.ID)
-		
-		#hue_image = ID_hue_image(hsv_image, Robot1.ID, orig_image)
-		find_robot(hsv_image,orig_image, RED,RED,RED, Robot1)
-		find_robot(hsv_image,orig_image, RED,BLUE,BLUE, Robot1)
-		find_robot(hsv_image,orig_image, YELLOW,BLUE,RED, Robot1)
-		find_robot(hsv_image,orig_image, RED,BLUE,YELLOW, Robot1)
-		find_robot(hsv_image,orig_image, BLUE,BLUE,BLUE, Robot1)
-		
-		# not found
-		find_robot(hsv_image,orig_image, YELLOW,YELLOW,BLUE, Robot1)
-		find_robot(hsv_image,orig_image, YELLOW,RED,BLUE, Robot1)
-		find_robot(hsv_image,orig_image, RED, BLUE, RED, Robot1)
-		find_robot(hsv_image,orig_image, RED, RED, BLUE, Robot1)
 
 		#track_robot(hue_image, orig_image, Robot1)
 		#acquire_locations(hue_image, Robot1)
@@ -133,8 +120,8 @@ def main():
 			#cv2.imshow("bgr", bgr_image)
 			#cv2.imshow("hsv", hsv_image)
 				
-			Robot1 = rs.Robot(RED)
-			Robot2 = rs.Robot(GREEN)
+			#Robot1 = rs.Robot(RED)
+			#Robot2 = rs.Robot(GREEN)
 			#print "Robot ID: %d" % (Robot1.ID)
 				
 			#lower_red_hue_range = cv2.inRange(hsv_image,cv2.cv.Scalar(0,100,100),cv2.cv.Scalar(10,255,255))
@@ -198,7 +185,10 @@ def acquire_obstacles(img, Map, max_height):
 	Map.walls = Walls
 	
 	
-def find_robot(hsv_image, orig_image,color1, color2, color3, robot):
+def find_robot(hsv_image, orig_image, robot):
+	color1 = robot.c1
+	color2 = robot.c2
+	color3 = robot.c3
 	found = False
 	hue_image_1 = ID_hue_image(hsv_image, color1, orig_image)
 	cnts = cv2.findContours(hue_image_1.copy(),cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)[-2]
@@ -251,7 +241,7 @@ def find_robot(hsv_image, orig_image,color1, color2, color3, robot):
 			distances_1.append(x_d)
 		if len(distances_1) == 0:
 			print "error occured in localization"
-			return
+			return False
 		min_index, min_value = min(enumerate(distances_1), key=operator.itemgetter(1))
 		#print(i)
 		#print "min_index : %d" %min_index
@@ -284,7 +274,7 @@ def find_robot(hsv_image, orig_image,color1, color2, color3, robot):
 			distances_2.append(x_d)
 		if len(distances_2) == 0:
 			print "Error occured in localization"
-			return
+			return False
 		min_index, min_value = min(enumerate(distances_2), key=operator.itemgetter(1))
 		#print(points_array_3)
 		if min_index < i :
@@ -323,6 +313,7 @@ def find_robot(hsv_image, orig_image,color1, color2, color3, robot):
 	
 	if found == False:
 		print "\nRobot not found"
+	return found
 	
 def thetacalc_n(a,b,c):
 	final_x = a[0]
