@@ -16,7 +16,6 @@ ROBOTS = []
 # fourcc = cv2.cv.CV_FOURCC('X','V','I','D')
 video_writer = cv2.VideoWriter("output3.avi", -1, 20, (640, 480))
 
-
 # Create four robots
 robot1 = Robot(BLUE, BLUE, BLUE) # Blue
 robot2 = Robot(GREEN, GREEN, GREEN) # Green
@@ -90,7 +89,6 @@ while True:
 	
 	video_writer.write(bgr_image)
 
-
 	print "iteration :%d" % i
 	
 	if i == 500:
@@ -110,6 +108,7 @@ while True:
 	(xpos2, ypos2, angle2) = rendezvous(ROBOTS[1], ROBOTS[2], ROBOTS[3]) #green
 	(xpos3, ypos3, angle3) = rendezvous(ROBOTS[2], ROBOTS[3], ROBOTS[0]) #red
 	(xpos4, ypos4, angle4) = rendezvous(ROBOTS[3], ROBOTS[0], ROBOTS[1]) #yellow
+
 
     MESSAGE1 = messagepackage(robot1, xpos1, ypos1, angle1)
     MESSAGE2 = messagepackage(robot2, xpos2, ypos2, angle2)
@@ -136,7 +135,7 @@ while True:
     #   currMESSAGE4 = MESSAGE4
 
 	i = i + 1
-	
+
 	for x in range(0, len(ROBOTS)):
 		if ROBOTS[x].inview == False:
 			MESSAGE = "stop"
@@ -160,7 +159,6 @@ while True:
     # else:
     # print "Message not recieved by robot, re-send"
 
-	
 	if cv2.waitKey(1) & 0xFF == ord('q'):
 		break
 
