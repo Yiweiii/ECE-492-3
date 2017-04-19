@@ -146,7 +146,7 @@ def main():
 			#cv2.imshow("hue",hsv_image)
 			#acquire_locations(hue_image, Robot1)
 			#acquire_locations(hue_image2, Robot2)
-			time.sleep(0.04)
+			time.sleep(0.01)
 			#print(cami)
 			cami = cami + 1
 			if cami == 500:
