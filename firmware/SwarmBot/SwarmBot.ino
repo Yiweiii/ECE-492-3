@@ -151,7 +151,7 @@ void loop() {
         MasonBot().runForward(&count1);
         packetBuffer[0] = ' ';
   }else if(packetBuffer[0] == 'c'){
-    MasonBot().feedbackRun( Xloc, Yloc, Thetaloc, Xexpected, Yexpected, Thetaexpected);
+    MasonBot().fbRunarc( Xloc, Yloc, Thetaloc, Xexpected, Yexpected, Thetaexpected);
     packetBuffer[0] = ' ';
   }else if (packetBuffer[0] == 'C'){
         MasonBot().controlRun(&count1, Xloc, Yloc, Thetaloc, Xexpected, Yexpected, Thetaexpected);
