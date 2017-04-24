@@ -119,6 +119,46 @@ void MasonBot::runForward(int *count){
 	}
 	_stop_all_motors();  
 }
+void MasonBot::runSemiCW(int u, int w){
+	_robo_move(u,0,w,u);
+}
+
+void MasonBot::runSemiCCW(int u, int w){
+	_robo_move(u,0,-w,u);
+}
+
+void MasonBot:: fbRunarc(float Xloc, float Yloc, int Thetaloc, float Xexpected, float Yexpected, int Thetaexpected){
+	int u;
+	int w;
+	int direction;
+	float dirchoice;
+	int rotmag2;
+	float mag = sqrt(pow(Xloc - Xexpected, 2) + pow(Yloc - Yexpected,2));
+	// mag is in meters
+	int rotmag = Thetaexpected - Thetaloc;
+	dirchoice = (rotmag + 360) % 360;
+	rotmag = abs(rotmag);
+	if (rotmag > 180)
+	    rotmag = abs(360 - rotmag); 
+	//rotmag is in degrees
+	
+		u = 50 + 400*(mag);
+		if (u > 250){
+			u = 250;
+		}
+		w= 50 + (1.11*rotmag);
+		if (w > 250){
+			w = 250;
+		}
+
+		if (dirchoice >= 180){
+			Serial.println("CW"); 
+			runSemiCW(u,w);
+		}else{
+			Serial.println("CCW");
+			runSemiCCW(u,w); 
+		}
+}
 
 void MasonBot::feedbackRun(float Xloc, float Yloc, int Thetaloc, float Xexpected, float Yexpected, int Thetaexpected){
 	int velocity;
