@@ -142,11 +142,11 @@ void MasonBot:: fbRunarc(float Xloc, float Yloc, int Thetaloc, float Xexpected, 
 	    rotmag = abs(360 - rotmag); 
 	//rotmag is in degrees
 	
-		u = 50 + 400*(mag);
+		u = 500*(mag);
 		if (u > 250){
 			u = 250;
 		}
-		w= 50 + (1.11*rotmag);
+		w= (1.38*rotmag);
 		if (w > 250){
 			w = 250;
 		}
