@@ -6,8 +6,8 @@ from robot_structure import Robot
 timestamp = .5 #Controls step size
 
 def rendezvous(robot1, robot2, robot3):
-    dist1 = 100  # set to zer0 or small value for rendevous
-    dist2 = 100  # set to zer0 or small value for rendevous
+    dist1 = 0  # set to zer0 or small value for rendevous
+    dist2 = 0  # set to zer0 or small value for rendevous
 
     y1 = -robot1.xpos
     y2 = -robot2.xpos
@@ -39,7 +39,7 @@ def rendezvous(robot1, robot2, robot3):
 
 
     #print(xx, yy)
-    finalx = robot1.xpos - xx
+    finalx = robot1.xpos + xx
     finaly = robot1.ypos - yy
 
 

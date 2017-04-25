@@ -9,7 +9,7 @@ import math
 import cv2
 import time
 
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 
 ROBOTS = []
 
@@ -17,10 +17,16 @@ ROBOTS = []
 video_writer = cv2.VideoWriter("output3.avi", -1, 20, (640, 480))
 
 # Create four robots
-robot1 = Robot(BLUE, BLUE, BLUE) # Blue
-robot2 = Robot(BLUE, YELLOW, YELLOW ) # Green
-robot3 = Robot(RED, RED, RED) # Red
+robot1 = Robot(BLUE, YELLOW, YELLOW) # Blue
+robot2 = Robot(YELLOW, BLUE, BLUE) # Green
+robot3 = Robot(YELLOW, BLUE, BLUE) # Red
 robot4 = Robot(YELLOW, YELLOW, YELLOW) # Yellow
+robot5 = Robot(BLUE, BLUE, BLUE)
+robot6 = Robot(BLUE, BLUE, BLUE)
+robot5.setPos(10,10,0)
+robot6.setPos(10,10,0)
+
+
 
 # Current map
 # Robot1 F8:F0:05:F1:D6:1C  - .6 - blue
@@ -28,8 +34,8 @@ robot4 = Robot(YELLOW, YELLOW, YELLOW) # Yellow
 # Robot3 F8:F0:05:F7:FF:F1  - .4 - red
 # Robot4 F8:F0:05:F7:FF:F2  - .5 - yellow
 
-robot1.HOST = '192.168.1.6' # blue robot
-robot2.HOST = '192.168.1.4' # red red blue
+robot1.HOST = '192.168.1.4' # blue robot
+robot2.HOST = '192.168.1.6' # red red blue
 robot3.HOST = '192.168.1.2' # red robot
 robot4.HOST = '192.168.1.7' # Yellow Robot
 
@@ -91,7 +97,7 @@ while True:
 
     print "iteration :%d" % i
 
-    if i == 100:
+    if i == 100000:
         print "Iterations - done!"
         MESSAGE = "stop"
         for x in range(0, len(ROBOTS)):
@@ -103,29 +109,33 @@ while True:
         cv2.destroyAllWindows()
         udpSerSock.close()
         exit(0)
+    # initialize locations so that all robots have a starting location before sending move commands.
     if i > 10:
-        (xpos1, ypos1, angle1) = rendezvous(ROBOTS[0], ROBOTS[1], ROBOTS[2]) #blue
-        (xpos2, ypos2, angle2) = rendezvous(ROBOTS[1], ROBOTS[0], ROBOTS[3]) #green
-        (xpos3, ypos3, angle3) = rendezvous(ROBOTS[2], ROBOTS[3], ROBOTS[0]) #red
-        (xpos4, ypos4, angle4) = rendezvous(ROBOTS[3], ROBOTS[2], ROBOTS[1]) #yellow
+        (xpos1, ypos1, angle1) = rendezvous(ROBOTS[0], ROBOTS[1], ROBOTS[1]) #blue
+        #(xpos2, ypos2, angle2) = rendezvous(ROBOTS[1], ROBOTS[0], ROBOTS[3]) #green
+        #(xpos3, ypos3, angle3) = rendezvous(ROBOTS[2], ROBOTS[3], ROBOTS[0]) #red
+        #(xpos4, ypos4, angle4) = rendezvous(ROBOTS[3], ROBOTS[2], ROBOTS[1]) #yellow
+        print("destination", xpos1, ypos1)
 
         MESSAGE1 = messagepackage(robot1, xpos1, ypos1, angle1)
-        MESSAGE2 = messagepackage(robot2, xpos2, ypos2, angle2)
-        MESSAGE3 = messagepackage(robot3, xpos3, ypos3, angle3)
-        MESSAGE4 = messagepackage(robot4, xpos4, ypos4, angle4)
+        #MESSAGE2 = messagepackage(robot2, xpos2, ypos2, angle2)
+        #MESSAGE3 = messagepackage(robot3, xpos3, ypos3, angle3)
+        #MESSAGE4 = messagepackage(robot4, xpos4, ypos4, angle4)
+
         udpSerSock.sendto(MESSAGE1, ADDR[0])
         # currMESSAGE1 = MESSAGE1
-        udpSerSock.sendto(MESSAGE2, ADDR[1])
+        #udpSerSock.sendto(MESSAGE2, ADDR[1])
         #   currMESSAGE2 = MESSAGE2
-        udpSerSock.sendto(MESSAGE3, ADDR[2])
+        #udpSerSock.sendto(MESSAGE3, ADDR[2])
         #    currMESSAGE3 = MESSAGE3
-        udpSerSock.sendto(MESSAGE4, ADDR[3])
+        #udpSerSock.sendto(MESSAGE4, ADDR[3])
         #   currMESSAGE4 = MESSAGE4
 
-    print("robot1blue", MESSAGE1, robot1.xpos, robot1.ypos, xpos1, ypos1, robot1.dir, angle1)
-    print("robot2blueyellow", MESSAGE2, robot2.xpos, robot2.ypos, xpos2, ypos2, robot2.dir, angle2)
-    print("robot3red", MESSAGE3, robot3.xpos, robot3.ypos, xpos3, ypos3, robot3.dir, angle3)
-    print("robot4Yellow", MESSAGE4, robot4.xpos, robot4.ypos, xpos4, ypos4, robot4.dir, angle4)
+        print("robot1blue", MESSAGE1, robot1.xpos, robot1.ypos, xpos1, ypos1, robot1.dir, angle1)
+        #print("robot2blueyellow", MESSAGE2, robot2.xpos, robot2.ypos, xpos2, ypos2, robot2.dir, angle2)
+        #print("robot3yellowblueblue", MESSAGE3, robot3.xpos, robot3.ypos, xpos3, ypos3, robot3.dir, angle3)
+        #print("robot4Yellow", MESSAGE4, robot4.xpos, robot4.ypos, xpos4, ypos4, robot4.dir, angle4)
+
 
     i = i + 1
 
