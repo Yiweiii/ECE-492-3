@@ -126,7 +126,7 @@ void MasonBot::runSemiCW(int u, int w){
 		vel = u;
 	else 
 		vel = w;
-	_robo_move(u,0,w,vel);
+	_robo_move(u,0,-w,vel);
 }
 
 void MasonBot::runSemiCCW(int u, int w){
@@ -135,7 +135,7 @@ void MasonBot::runSemiCCW(int u, int w){
 		vel = u;
 	else 
 		vel = w;
-	_robo_move(u,0,-w,u);
+	_robo_move(u,0,w,u);
 }
 
 void MasonBot:: fbRunarc(float Xloc, float Yloc, int Thetaloc, float Xexpected, float Yexpected, int Thetaexpected){
