@@ -14,29 +14,22 @@ YELLOW = 4
 ORANGE = 5
 VIOLET = 6
 
-#red_lower = np.array([0,100,100])
-#red_upper = np.array([50,255,255])
-
-red_lower = np.array([140,100,100])
-red_upper = np.array([179,255,255])
+red_lower_a = np.array([0,180,100])
+red_upper_a = np.array([10,255,255])
+red_lower_b = np.array([170, 100, 100])
+red_upper_b = np.array([180,255,255])
 
 green_lower = np.array([37,81,158])
 green_upper = np.array([83,119,247])
 
-blue_lower = np.array([70,100,255])
-blue_upper = np.array([140,255,255])
-
-#blue_lower = np.array([110,100,100])
-#blue_upper = np.array([130,255,255])
-
-#yellow_lower = np.array([25,110,190])
-#yellow_upper = np.array([90,255,255])
+blue_lower = np.array([90,50,255])
+blue_upper = np.array([110,255,255])
 
 yellow_lower = np.array([25,100,100])
-yellow_upper = np.array([60,255,255])
+yellow_upper = np.array([35,255,255])
 
-violet_lower = np.array([60,100,0])
-violet_upper = np.array([255,255,255])
+violet_lower = np.array([115,100,160])
+violet_upper = np.array([125,255,255])
 
 orange_lower = np.array([10, 100, 180])
 orange_upper = np.array([80,255,255])
@@ -58,8 +51,11 @@ def isLeft(a, b, c):
 
 def ID_hue_image(img, ID, orig):
 	if(ID is RED):
-		lower = red_lower
-		upper = red_upper
+		lower_red_hue_range = cv2.inRange(img, red_lower_a, red_upper_a)
+		upper_red_hue_range = cv2.inRange(img, red_lower_b, red_upper_b)
+		mask = cv2.addWeighted(lower_red_hue_range, 1.0, upper_red_hue_range, 1.0, 0.0)
+		hue_image = cv2.GaussianBlur(mask, (9,9), 2, 2)
+		return hue_image
 	elif(ID is GREEN):
 		lower = green_lower
 		upper = green_upper
@@ -96,61 +92,35 @@ def main():
 			
 		bgr_image = cv2.medianBlur(bgr_image, 3)
 		hsv_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2HSV)
-		
-		#Robot1 = rs.Robot(int(sys.argv[2]))
-		#print "Robot ID: %d" % (Robot1.ID)
-
-		#track_robot(hue_image, orig_image, Robot1)
-		#acquire_locations(hue_image, Robot1)
 	else:
 		print "Active mode"
 		cap = cv2.VideoCapture(0)
-		cami = 0
 		while(True):
 			ret, bgr_image = cap.read()
 			cv2.imshow("cam_image", bgr_image)
 			#width, height = frame.shape
 
 			orig_image = bgr_image.copy()
-				
 			bgr_image = cv2.medianBlur(bgr_image, 3)
 			hsv_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2HSV)
-			
-			#cv2.imshow("orginal", orig_image)
-			#cv2.imshow("bgr", bgr_image)
-			#cv2.imshow("hsv", hsv_image)
 				
-			#Robot1 = rs.Robot(RED)
-			#Robot2 = rs.Robot(GREEN)
-			#print "Robot ID: %d" % (Robot1.ID)
-				
-			#lower_red_hue_range = cv2.inRange(hsv_image,cv2.cv.Scalar(0,100,100),cv2.cv.Scalar(10,255,255))
-			#upper_red_hue_range = cv2.inRange(hsv_image,cv2.cv.Scalar(160,100,100),cv2.cv.Scalar(180,255,255))
-			#red_hue_image = cv2.addWeighted(lower_red_hue_range,1.0,upper_red_hue_range,1.0,0.0)
+			Robot1 = rs.Robot(YELLOW, BLUE, BLUE)
+			Robot2 = rs.Robot(BLUE, YELLOW, YELLOW)
+			Robot3 = rs.Robot(VIOLET, VIOLET, VIOLET)
+			Robot4 = rs.Robot(RED, RED, RED)
+
+			print "\nfind YELLOW BLUE BLUE"
+			find_robot(hsv_image,orig_image,Robot1)
 			
-			#print "\nfind BLUE YELLOW YELLOW"
-			#find_robot(hsv_image,orig_image, BLUE,BLUE,YELLOW, Robot1)
-			#print "\nfind YELLOW YELLOW YELLOW"
-			find_robot(hsv_image,orig_image, YELLOW,YELLOW,YELLOW, Robot1)
-			#print "\nfind BLUE BLUE BLUE"
-			#find_robot(hsv_image,orig_image, BLUE,BLUE,BLUE, Robot1)
-			#print "\nfind RED RED RED"
-			#find_robot(hsv_image,orig_image, RED,RED,RED, Robot1)
-			#print "\nfind GREEN GREEN GREEN"
-			#find_robot(hsv_image,orig_image, GREEN,GREEN,GREEN, Robot1)
+			print "\nfind BLUE YELLOW YELLOW"
+			find_robot(hsv_image,orig_image,Robot2)
+			
+			print "\nfind VIOLET VIOLET VIOLET"
+			find_robot(hsv_image,orig_image,Robot3)
+			
+			print "\nfind RED RED RED"
+			find_robot(hsv_image,orig_image,Robot4)
 
-
-			#hue_image2 = ID_hue_image(hsv_image, Robot2.ID, orig_image)
-					
-			#track_robot(hue_image, orig_image, Robot1)
-			#cv2.imshow("hue",hsv_image)
-			#acquire_locations(hue_image, Robot1)
-			#acquire_locations(hue_image2, Robot2)
-			time.sleep(0.01)
-			#print(cami)
-			cami = cami + 1
-			if cami == 500:
-				break
 			if cv2.waitKey(1) & 0xFF == ord('q'):
 				break
 
@@ -159,7 +129,7 @@ def main():
 
 def acquire_obstacles(img, Map, max_height):
 	Walls = []
-	hue_image = ID_hue_image(img, YELLOW, img)
+	hue_image = ID_hue_image(img, GREEN, img)
 	#cv2.imshow("img", hue_image)
 	#cv2.waitKey(0)
 	cnts = cv2.findContours(hue_image.copy(),cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)[-2]
@@ -202,6 +172,11 @@ def find_robot(hsv_image, orig_image, robot):
 		points_array_1.append((a,b))
 		T = triangle((a,b),[0,0],[0,0])
 		final_coordinates.append(T)
+	if (color1 == color2 and color2 == color3):
+		cv2.imshow("hue", hue_image_1)
+		if len(cnts) < 3:
+			print "Error less than 3 cnts"
+			return
 	#print (points_array_1)
 	hue_image_2 = ID_hue_image(hsv_image, color2, orig_image)
 	cnts = cv2.findContours(hue_image_2.copy(),cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)[-2]
@@ -243,6 +218,10 @@ def find_robot(hsv_image, orig_image, robot):
 			print "error occured in localization"
 			return False
 		min_index, min_value = min(enumerate(distances_1), key=operator.itemgetter(1))
+		if min_value < 30 and len(distances_1)>1:
+			#print(min_value)
+			distances_1.remove(min_value)
+			min_index, min_value = min(enumerate(distances_1), key=operator.itemgetter(1))
 		#print(i)
 		#print "min_index : %d" %min_index
 		if min_index < i :
@@ -293,22 +272,22 @@ def find_robot(hsv_image, orig_image, robot):
 	for i in range(0,len(points_array_1)):
 		final_perims.append(final_coordinates[i].get_perimeter())
 		X = (final_coordinates[i].x1,final_coordinates[i].x2, final_coordinates[i].x3)
-		#print(X)
 		d1 = final_coordinates[i].d1
 		d2 = final_coordinates[i].d2
 		x = (final_coordinates[i].x2[0] + final_coordinates[i].x3[0])/2
 		y = (final_coordinates[i].x2[1] + final_coordinates[i].x3[1])/2
 		x1 = (x,y)
+		#print "d1: %d d2: %d" % (d1,d2)
 		if (color2 != color3):
 			check = isLeft(final_coordinates[i].x1,x1,final_coordinates[i].x2)
-		if ((abs(d1 - d2) < 5) and check):
+		if ((abs(d1 - d2) < 5) and check and d1>30 and d2>30 and d1<40 and d2<40):
 			#print ("\nRobot found")
-			#print "d1: %d d2: %d" % (d1,d2)
+			print "d1: %d d2: %d" % (d1,d2)
 			#print(X)
 			found = True
 			Robotx, Roboty, Robotdir = thetacalc(final_coordinates[i].x1,final_coordinates[i].x2, final_coordinates[i].x3)
 			robot.setPos(Robotx, Roboty, Robotdir)
-			#print "Robot x: %d y: %d dir : %d" %(robot.xpos, robot.ypos, robot.dir)
+			print "Robot x: %d y: %d dir : %d" %(robot.xpos, robot.ypos, robot.dir)
 			break
 	
 	if found == False:

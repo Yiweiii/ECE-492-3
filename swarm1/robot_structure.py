@@ -10,8 +10,7 @@ class Robot:
 		self.HOST = ''
 
     def displayRobot(self):
-        print
-        "Robot #: ", self.ID, ", x: ", self.xpos, ", y: ", self.ypos, ", dir: ", self.dir
+        print "Robot #: x: ", self.xpos, ", y: ", self.ypos, ", dir: ", self.dir
 
     def getX(self):
         return self.xpos
