@@ -14,8 +14,10 @@ YELLOW = 4
 ORANGE = 5
 VIOLET = 6
 
-red_lower = np.array([0,180,100])
-red_upper = np.array([10,255,255])
+red_lower_a = np.array([0,180,100])
+red_upper_a = np.array([10,255,255])
+red_lower_b = np.array([170, 100, 100])
+red_upper_b = np.array([180,255,255])
 
 green_lower = np.array([37,81,158])
 green_upper = np.array([83,119,247])
@@ -49,8 +51,11 @@ def isLeft(a, b, c):
 
 def ID_hue_image(img, ID, orig):
 	if(ID is RED):
-		lower = red_lower
-		upper = red_upper
+		lower_red_hue_range = cv2.inRange(img, red_lower_a, red_upper_a)
+		upper_red_hue_range = cv2.inRange(img, red_lower_b, red_upper_b)
+		mask = cv2.addWeighted(lower_red_hue_range, 1.0, upper_red_hue_range, 1.0, 0.0)
+		hue_image = cv2.GaussianBlur(mask, (9,9), 2, 2)
+		return hue_image
 	elif(ID is GREEN):
 		lower = green_lower
 		upper = green_upper
@@ -87,12 +92,6 @@ def main():
 			
 		bgr_image = cv2.medianBlur(bgr_image, 3)
 		hsv_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2HSV)
-		
-		#Robot1 = rs.Robot(int(sys.argv[2]))
-		#print "Robot ID: %d" % (Robot1.ID)
-
-		#track_robot(hue_image, orig_image, Robot1)
-		#acquire_locations(hue_image, Robot1)
 	else:
 		print "Active mode"
 		cap = cv2.VideoCapture(0)
@@ -102,52 +101,26 @@ def main():
 			#width, height = frame.shape
 
 			orig_image = bgr_image.copy()
-				
 			bgr_image = cv2.medianBlur(bgr_image, 3)
 			hsv_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2HSV)
-			
-			#cv2.imshow("orginal", orig_image)
-			#cv2.imshow("bgr", bgr_image)
-			#cv2.imshow("hsv", hsv_image)
 				
 			Robot1 = rs.Robot(YELLOW, BLUE, BLUE)
 			Robot2 = rs.Robot(BLUE, YELLOW, YELLOW)
 			Robot3 = rs.Robot(VIOLET, VIOLET, VIOLET)
 			Robot4 = rs.Robot(RED, RED, RED)
-			#Robot2 = rs.Robot(GREEN)
-			#print "Robot ID: %d" % (Robot1.ID)
-				
-			#lower_red_hue_range = cv2.inRange(hsv_image,cv2.cv.Scalar(0,100,100),cv2.cv.Scalar(10,255,255))
-			#upper_red_hue_range = cv2.inRange(hsv_image,cv2.cv.Scalar(160,100,100),cv2.cv.Scalar(180,255,255))
-			#red_hue_image = cv2.addWeighted(lower_red_hue_range,1.0,upper_red_hue_range,1.0,0.0)
+
+			print "\nfind YELLOW BLUE BLUE"
+			find_robot(hsv_image,orig_image,Robot1)
 			
-			#
-			#find_robot(hsv_image,orig_image, BLUE,BLUE,YELLOW, Robot1)
-			#print "\nfind YELLOW YELLOW YELLOW"
-			#print "\nfind YELLOW BLUE BLUE"
-			#find_robot(hsv_image,orig_image,Robot1)
-			#print "\nfind BLUE YELLOW YELLOW"
-			#find_robot(hsv_image,orig_image,Robot2)
-			#print "\nfind VIOLET VIOLET VIOLET"
-			#find_robot(hsv_image,orig_image,Robot3)
+			print "\nfind BLUE YELLOW YELLOW"
+			find_robot(hsv_image,orig_image,Robot2)
+			
+			print "\nfind VIOLET VIOLET VIOLET"
+			find_robot(hsv_image,orig_image,Robot3)
+			
 			print "\nfind RED RED RED"
 			find_robot(hsv_image,orig_image,Robot4)
-			#print "\nfind BLUE BLUE BLUE"
-			#find_robot(hsv_image,orig_image, BLUE,BLUE,BLUE, Robot1)
-			#print "\nfind RED RED RED"
-			#find_robot(hsv_image,orig_image, RED,RED,RED, Robot1)
-			#print "\nfind GREEN GREEN GREEN"
-			#find_robot(hsv_image,orig_image, GREEN,GREEN,GREEN, Robot1)
 
-
-			#hue_image2 = ID_hue_image(hsv_image, Robot2.ID, orig_image)
-					
-			#track_robot(hue_image, orig_image, Robot1)
-			#cv2.imshow("hue",hsv_image)
-			#acquire_locations(hue_image, Robot1)
-			#acquire_locations(hue_image2, Robot2)
-			#time.sleep(0.01)
-			#print(cami)
 			if cv2.waitKey(1) & 0xFF == ord('q'):
 				break
 
