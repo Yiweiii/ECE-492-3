@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random
 from camera_actions import *
-from -- import *
+from server import *
 # X_estimate = np.asmatrix(np.zeros((1,4)))
 # X_predict = np.asmatrix(np.zeros((1,4)))
 # A = np.mat([[1,1,0,0],[0,1,0,0],[0,0,1,1],[0,0,0,1]])
@@ -27,7 +27,7 @@ from -- import *
 # k = 2
 # i = 0
 # coeff = 0.8
-delta_t = 0.05
+delta_t = 0.04
 
 x_1 = -velocity*delta_t*sin(Robotdir)
 x_2 = velocity*delta_t*cos(Robotdir)
