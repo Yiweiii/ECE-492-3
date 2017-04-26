@@ -43,15 +43,16 @@ R = np.mat([[1,0],[0,1]])
 U = np.mat([[v],[ang_v]])
 I = np.mat([[1,0,0],[0,1,0],[0,0,1]])
 
-def kal_predict():
+def kal_predict(X_estimate, P_estimate):
     #u(k-1) = u_trans
 	#global A,X_estimate,X_predict,P_estimate,P_predict
+	global A,B,U,Q
 	X_predict = (A*X_estimate) + (B*U)
 	P_predict = A*P_estimate*(A.transpose()) + Q
 	return (X_predict, P_predict)
 	
-def kal_update(new_sample):
-	global A,H,I
+def kal_update(new_sample, X_predict, P_predict):
+	global A,H,I,new_sample
 	Kg = P_predict*(H.transpose())*(np.linalg.inv(H*P_predict*(H.transpose()) + R))
 	X_estimate = X_predict + Kg*(new_sample - H*X_predict)
 	P_estimate = (I - Kg*H)*P_predict
