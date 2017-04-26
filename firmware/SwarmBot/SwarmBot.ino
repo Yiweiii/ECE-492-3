@@ -9,7 +9,7 @@
 #include <TimerOne.h>
 
 #include <SPI.h>
-#include <WiFi101.h>
+#include <WiFi101_MasonBot.h>
 #include <WiFiUdp.h>
 
 #define PACKET_BUFFER_SIZE 255
@@ -71,7 +71,7 @@ void setup() {
 	DDRC = 0xFF;
 
 	// Try to find Wi-Fi module
-	if (WiFi.status() == WL_NO_SHIELD) {
+	if (WiFi.status() == WL_NO_MODULE) {
 		// Turn on all LEDs if the Wi-Fi shield is not present.
 		// Do nothing afterward.
 		PORTC = L_A|L_B|L_C|L_PWR|L_WIFI;

@@ -24,7 +24,7 @@
 #ifndef WIFIMDNSRESPONDER_H
 #define WIFIMDNSRESPONDER_H
 
-#include "WiFi101.h"
+#include <WiFi101_MasonBot.h>
 #include "WiFiUdp.h"
 
 class WiFiMDNSResponder {
