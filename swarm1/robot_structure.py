@@ -5,6 +5,8 @@ class Robot:
 		self.xpos = 0
 		self.ypos = 0
 		self.dir = 0
+		self.velocity = 0
+		self.ang_velocity = 0
 		self.c1 = c1
 		self.c2 = c2
 		self.c3 = c3
@@ -32,6 +34,10 @@ class Robot:
         self.xpos = xpos
         self.ypos = ypos
         self.dir = dir
+		
+	def setVol(self, velocity, ang_velocity):
+        self.velocity = velocity
+        self.ang_velocity = ang_velocity
 		
 	def setKF(self, x_est, p_est):
 		self.x_est = x_est

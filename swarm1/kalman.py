@@ -39,7 +39,7 @@ theta = 0
 # v_1 = delta_t*cos(Robotdir)
 # v_2 = delta_t*sin(Robotdir)
 
-def setup(velocity, ang_velocity, theta):
+def kal_setup(velocity, ang_velocity, theta):
 	velocity = velocity
 	ang_velocity = ang_velocity
 	theta = theta
