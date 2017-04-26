@@ -122,20 +122,29 @@ void MasonBot::runForward(int *count){
 
 void MasonBot::runSemiCW(int u, int w){
 	int vel = 0;
-	if (u > w)
+	if (u < 50){
+		_stop_all_motors();
+	}else if(u > w){
 		vel = u;
-	else 
+	     _robo_move(u,0,-w,vel);
+	}else{ 
 		vel = w;
-	_robo_move(u,0,-w,vel);
+		_robo_move(u,0,-w,vel);
+	}
 }
 
 void MasonBot::runSemiCCW(int u, int w){
 	int vel = 0;
-	if (u > w)
+	if (u < 50){
+		_stop_all_motors();
+	}else if(u > w){
 		vel = u;
-	else 
+	     _robo_move(u,0,w,vel);
+	}else{ 
 		vel = w;
-	_robo_move(u,0,w,u);
+		_robo_move(u,0,w,vel);
+	}
+
 }
 
 void MasonBot:: fbRunarc(float Xloc, float Yloc, int Thetaloc, float Xexpected, float Yexpected, int Thetaexpected){
@@ -157,7 +166,7 @@ void MasonBot:: fbRunarc(float Xloc, float Yloc, int Thetaloc, float Xexpected, 
 		if (u > 250){
 			u = 250;
 		}
-		w= (1.38*rotmag);
+		w= (2.07*rotmag);
 		if (w > 250){
 			w = 250;
 		}
