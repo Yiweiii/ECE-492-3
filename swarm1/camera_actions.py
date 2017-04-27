@@ -2,6 +2,7 @@ import numpy as np
 import cv2
 import robot_structure as rs
 from implementation import*
+from kalman import *
 import sys
 import math
 import operator
@@ -33,6 +34,12 @@ violet_upper = np.array([125,255,255])
 
 orange_lower = np.array([10, 100, 180])
 orange_upper = np.array([80,255,255])
+
+Robotx_est = np.asmatrix(np.zeros((3,1)))
+Robotp_est = np.asmatrix(np.zeros((3,3)))
+
+Robotx_pre = np.asmatrix(np.zeros((3,1)))
+Robotp_pre = np.asmatrix(np.zeros((3,3)))
 
 class triangle:
 	def __init__(self, x1, x2, x3):
@@ -290,7 +297,23 @@ def find_robot(hsv_image, orig_image, robot):
 			#print "Robot2 x: %d y: %d dir : %d" %(Robotx, Roboty, Robotdir)
 			break
 	
+			print "Robot x: %d y: %d dir : %d" %(robot.xpos, robot.ypos, robot.dir)
+			new_sample = np.mat([[Robotx],[Roboty],[Robotdir]])
+			kal_setup(robot.velocity, robot.ang_velocity, robot.dir)
+			Robotx_pre, Robotp_pre = kal_predict(robot.x_est, robot.p_est)
+			(Robotx_est, Robotp_est) = kal_predict(new_sample,Robotx_pre, Robotp_pre)
+			robot.setKF(Robotx_est, Robotp_est)
+		return True
 	if found == False:
+		Robotx_pre, Robotp_pre = kal_predict(robot.x_est, robot.p_est)
+		Robotx = Robotx_pre[0,0]
+		Roboty = Robotx_pre[1,0]
+		Robotdir = Robotx_pre[2,0]
+		robot.setPos(Robotx, Roboty, Robotdir)
+		kal_setup(robot.velocity, robot.ang_velocity, robot.dir)
+		new_sample = np.mat([[Robotx],[Roboty],[Robotdir]])
+		(Robotx_est, Robotp_est) = kal_predict(new_sample,Robotx_pre, Robotp_pre)
+		robot.setKF(Robotx_est, Robotp_est)
 		print "\nRobot not found"
 	return found
 	
@@ -417,6 +440,7 @@ def acquire_locations(img, robot):
 		#print(coordinates)
 		Robotx, Roboty, Robotdir = thetacalc(coordinates[0], coordinates[1], coordinates[2])
 		robot.setPos(Robotx, Roboty, Robotdir)
+		
 		return True
 		
 	else:

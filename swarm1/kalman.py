@@ -2,7 +2,10 @@ from __future__ import division
 import numpy as np
 import matplotlib.pyplot as plt
 import random
-
+import math
+#from camera_actions import *
+#from server import *
+#from testKF import *
 # X_estimate = np.asmatrix(np.zeros((1,4)))
 # X_predict = np.asmatrix(np.zeros((1,4)))
 # A = np.mat([[1,1,0,0],[0,1,0,0],[0,0,1,1],[0,0,0,1]])
@@ -26,19 +29,50 @@ import random
 # k = 2
 # i = 0
 # coeff = 0.8
-	
+delta_t = 0.04
+velocity = 0
+ang_velocity = 0
+theta = 0
 
-def kal_predict():
+# x_1 = -velocity*delta_t*sin(Robotdir)
+# x_2 = velocity*delta_t*cos(Robotdir)
+# v_1 = delta_t*cos(Robotdir)
+# v_2 = delta_t*sin(Robotdir)
+
+def kal_setup(velocity, ang_velocity, theta):
+	velocity = velocity
+	ang_velocity = ang_velocity
+	theta = theta
+
+x_1 = -velocity*delta_t*(math.sin(theta))
+x_2 = velocity*delta_t*(math.cos(theta))
+v_1 = delta_t*(math.cos(theta))
+v_2 = delta_t*(math.sin(theta))
+
+
+
+A = np.mat([[1,0,x_1],[0,1,x_2],[0,0,1]])
+B = np.mat([[v_1,0],[v_2,0],[0,1]])
+Q = np.mat([[10,0,0],[0,10,0],[0,0,10]])
+R = np.mat([[1,0,0],[0,1,0],[0,0,1]])
+U = np.mat([[velocity],[ang_velocity]])
+I = np.mat([[1,0,0],[0,1,0],[0,0,1]])
+H = np.mat([[1,0,0],[0,1,0],[0,0,1]])
+
+def kal_predict(X_estimate, P_estimate):
     #u(k-1) = u_trans
-	global A,X_estimate,X_predict,P_estimate,P_predict
-	X_predict = (A*X_estimate.transpose()).transpose()
-	P_predict = A*P_estimate*(A.transpose())
+	#global A,X_estimate,X_predict,P_estimate,P_predict
+	global A,B,U,Q
+	X_predict = (A*X_estimate) + (B*U)
+	P_predict = A*P_estimate*(A.transpose()) + Q
+	return (X_predict, P_predict)
 	
-def kal_update(new_sample):
-	global A,H,I,Kg,X_estimate,X_predict,P_estimate,P_predict
+def kal_update(new_sample, X_predict, P_predict):
+	global A,H,I
 	Kg = P_predict*(H.transpose())*(np.linalg.inv(H*P_predict*(H.transpose()) + R))
-	X_estimate = (X_predict.transpose() + Kg*(new_sample - H*(X_predict.transpose()))).transpose()
+	X_estimate = X_predict + Kg*(new_sample - H*X_predict)
 	P_estimate = (I - Kg*H)*P_predict
+	return (X_estimate, P_estimate)
 	#new_message[:,k] = new_sample - np.dot(H,X_predict[k,:].transpose())
 	#new_deviation = np.dot(H,np.dot(P_predict,H.transpose())) + R
 	#delta(k) = np.dot(np.dot(new_message[:,k].transpose(),np.linalg.inv(new_deviation)),new_message[:,k])
@@ -51,29 +85,7 @@ def kal_update(new_sample):
 	#y.append(4*i + random.uniform(1,5))
 	#i = i + 1
 	
-def kalman(x,y):
-	if (count == 0):
-		x[0] = x
-		y[0] = y
-		count = count + 1
-	elif (count == 1):
-		x[1] = x
-		y[1] = y
-		X_estimate[0,0] = x[1]
-		X_estimate[0,1] = (x[1] - x[0])/2
-		X_estimate[0,2] = y[1]
-		X_estimate[0,3] = (y[1] - y[0])/2
-		count = count + 1
-	else:
-		new_sample[0] = x
-		new_sample[1] = y
-		kal_predict()
-		kal_update(new_sample)
-	
-	x_cor = X_estimate[0,0]
-	y_cor = X_estimate[0,2]
-	
-	return x_cor, y_cor
+
 
 #plt.figure(1)
 #plt.plot(x,y)

@@ -1,11 +1,17 @@
+import numpy as np
+
 class Robot:
     def __init__(self, c1,c2,c3):
 		self.xpos = 0
 		self.ypos = 0
 		self.dir = 0
+		self.velocity = 0
+		self.ang_velocity = 0
 		self.c1 = c1
 		self.c2 = c2
 		self.c3 = c3
+		self.x_est = np.asmatrix(np.zeros((1,4)))
+		self.p_est = np.mat([[50,100,100],[100,50,100],[100,100,50]])
 		self.inview = False
 		self.HOST = ''
 
@@ -28,4 +34,12 @@ class Robot:
         self.xpos = xpos
         self.ypos = ypos
         self.dir = dir
+		
+	def setVol(self, velocity, ang_velocity):
+        self.velocity = velocity
+        self.ang_velocity = ang_velocity
+		
+	def setKF(self, x_est, p_est):
+		self.x_est = x_est
+		self.p_est = p_est
 		
