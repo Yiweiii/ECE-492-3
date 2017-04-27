@@ -22,13 +22,13 @@ red_upper_b = np.array([180,255,255])
 green_lower = np.array([37,81,158])
 green_upper = np.array([83,119,247])
 
-blue_lower = np.array([90,50,255])
+blue_lower = np.array([90,100,100])
 blue_upper = np.array([110,255,255])
 
 yellow_lower = np.array([25,100,100])
 yellow_upper = np.array([35,255,255])
 
-violet_lower = np.array([115,100,160])
+violet_lower = np.array([115,100,100])
 violet_upper = np.array([125,255,255])
 
 orange_lower = np.array([10, 100, 180])
@@ -104,16 +104,16 @@ def main():
 			bgr_image = cv2.medianBlur(bgr_image, 3)
 			hsv_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2HSV)
 				
-			Robot1 = rs.Robot(YELLOW, BLUE, BLUE)
-			Robot2 = rs.Robot(BLUE, YELLOW, YELLOW)
+			Robot1 = rs.Robot(BLUE, BLUE, BLUE)
+			Robot2 = rs.Robot(YELLOW, YELLOW, YELLOW)
 			Robot3 = rs.Robot(VIOLET, VIOLET, VIOLET)
 			Robot4 = rs.Robot(RED, RED, RED)
 
-			print "\nfind YELLOW BLUE BLUE"
+			print "\nfind BLUE BLUE BLUE"
 			find_robot(hsv_image,orig_image,Robot1)
 			
-			print "\nfind BLUE YELLOW YELLOW"
-			find_robot(hsv_image,orig_image,Robot2)
+			#print "\nfind YELLOW YELLOW YELLOW"
+			#find_robot(hsv_image,orig_image,Robot2)
 			
 			print "\nfind VIOLET VIOLET VIOLET"
 			find_robot(hsv_image,orig_image,Robot3)
@@ -137,7 +137,7 @@ def acquire_obstacles(img, Map, max_height):
 	for i in range(0,len(cnts)):
 		c = cnts[i]
 		x,y,w,h = cv2.boundingRect(c)
-		# "x : %d y : %d w : %d h : %d" % (x,y,w,h)
+		#print "x : %d y : %d w : %d h : %d" % (x,y,w,h)
 		
 		j = int(round(w/max_height))
 		k = int(round(h/max_height))
@@ -173,7 +173,6 @@ def find_robot(hsv_image, orig_image, robot):
 		T = triangle((a,b),[0,0],[0,0])
 		final_coordinates.append(T)
 	if (color1 == color2 and color2 == color3):
-		cv2.imshow("hue", hue_image_1)
 		if len(cnts) < 3:
 			print "Error less than 3 cnts"
 			return
@@ -282,12 +281,13 @@ def find_robot(hsv_image, orig_image, robot):
 			check = isLeft(final_coordinates[i].x1,x1,final_coordinates[i].x2)
 		if ((abs(d1 - d2) < 5) and check and d1>30 and d2>30 and d1<40 and d2<40):
 			#print ("\nRobot found")
-			print "d1: %d d2: %d" % (d1,d2)
+			#print "d1: %d d2: %d" % (d1,d2)
 			#print(X)
 			found = True
 			Robotx, Roboty, Robotdir = thetacalc(final_coordinates[i].x1,final_coordinates[i].x2, final_coordinates[i].x3)
 			robot.setPos(Robotx, Roboty, Robotdir)
-			print "Robot x: %d y: %d dir : %d" %(robot.xpos, robot.ypos, robot.dir)
+			#print "Robot x: %d y: %d dir : %d" %(robot.xpos, robot.ypos, robot.dir)
+			#print "Robot2 x: %d y: %d dir : %d" %(Robotx, Roboty, Robotdir)
 			break
 	
 	if found == False:
@@ -307,6 +307,21 @@ def thetacalc_n(a,b,c):
 	dir = (math.atan2(dis_y,dis_x) * 180/3.14159)
 	degrees = (dir + 360) % 360
 	return final_x, final_y, degrees
+	
+def circlecenter(a, b, c):
+	ydelta_a = b[1] - a[1]
+	xdelta_a = b[0] - a[0]
+	ydelta_b = c[1] - b[1]
+	xdelta_b = c[0] - b[0]
+	center = [0,0]
+	aslope = float(ydelta_a)/xdelta_a
+	bslope = float(ydelta_b)/xdelta_b
+	center[0] = (aslope*bslope*(a[1]-c[1]) + bslope*(a[0]+b[0]) - aslope*(b[0]+c[0]))/(2*(bslope-aslope))
+	center[1] = -1*(center[0] - (a[0]+b[0])/2)/aslope + (a[1]+b[1])/2
+	
+	final_center = (center[0],center[1])
+	return final_center
+	
 	
 def thetacalc(a, b, c):
 	final_x = 0

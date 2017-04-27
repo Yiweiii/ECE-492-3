@@ -22,9 +22,7 @@ robot2 = Robot(YELLOW, BLUE, BLUE) # Green
 robot3 = Robot(YELLOW, BLUE, BLUE) # Red
 robot4 = Robot(YELLOW, YELLOW, YELLOW) # Yellow
 robot5 = Robot(BLUE, BLUE, BLUE)
-robot6 = Robot(BLUE, BLUE, BLUE)
 robot5.setPos(10,10,0)
-robot6.setPos(10,10,0)
 
 
 
