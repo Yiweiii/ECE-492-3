@@ -19,24 +19,25 @@
 #include <TimerOne.h>
 
 #include <SPI.h>
-#include <WiFi101.h>
+#include <WiFi101_MasonBot.h>
 #include <WiFiUdp.h>
 
 const int TEST = 88;   //Battery test
 
 int battery = 6;
 float batterylevel = 0;
+char mac[6];
 
 int count1 =0;
 int count2 =0;
 int count3 =0;
 
 int status = WL_IDLE_STATUS;
-char ssid[] = "Verizon-SM-G930V-6155"; //  your network SSID (name) // IP address 192.168.43.95(may change)
-char pass[] = "jasonwifi"; 
+//char ssid[] = "Verizon-SM-G930V-6155"; //  your network SSID (name) // IP address 192.168.43.95(may change)
+//char pass[] = "jasonwifi"; 
 
-//char ssid[] = "QCHJB"; //  your network SSID (name) // IP address 192.168.43.95(may change)
-//char pass[] = "robotsarecool2!"; 
+char ssid[] = "QCHJB"; //  your network SSID (name) // IP address 192.168.43.95(may change)
+char pass[] = "robotsarecool2!"; 
 
 int keyIndex = 1;            // your network key Index number (needed only for WEP)
 
@@ -96,7 +97,7 @@ WiFi.setPins(41,45,47,43); //47 CS, 45 en, 43 irq, 41 rst
   }
 
   // check for the presence of the shield:
-  if (WiFi.status() == WL_NO_SHIELD) {
+  if (WiFi.status() == WL_NO_MODULE) {
     Serial.println("WiFi shield not present");
     // don't continue:
     while (true);
@@ -118,6 +119,9 @@ WiFi.setPins(41,45,47,43); //47 CS, 45 en, 43 irq, 41 rst
   Serial.println("\nStarting connection to server...");
   // if you get a connection, report back via serial:
   Udp.begin(localPort);
+
+  // Obtain the MAC address of the Wi-Fi module.
+  WiFi.macAddress(mac);
 }
 
 void loop() {
@@ -144,7 +148,7 @@ void loop() {
     velocity = strtoul(vel, NULL, 0);
 
     // Controlled move,  where capital is current and lower is wanted
-    //C X.XX Y.YY ZZZ x.xx y.yy zzz
+    //C X.XX,Y.YY,ZZZ,x.xx,y.yy,zzz
     
     char *Xlocch = packetBuffer + 2;
     char *Ylocch = packetBuffer + 7;
@@ -172,10 +176,10 @@ void loop() {
     Udp.endPacket();
   }
   //***************************send velocity to move commands  
-  if(packetBuffer[0] == 'A'){
+  if(packetBuffer[0] == 'a'){
         MasonBot().moveRotateCW(velocity);
         packetBuffer[0] = ' ';
-  }else if(packetBuffer[0] == 'a'){
+  }else if(packetBuffer[0] == 'A'){
         MasonBot().moveRotateCCW(velocity);
          packetBuffer[0] = ' ';
   }else if(packetBuffer[0] == 'f'){
@@ -187,9 +191,20 @@ void loop() {
   }else if(packetBuffer[0] == 'r'){
         MasonBot().runForward(&count1);
         packetBuffer[0] = ' ';
+  }else if(packetBuffer[0] == 'D'){
+        MasonBot().feedbackRun( Xloc, Yloc, Thetaloc, Xexpected, Yexpected, Thetaexpected);
+        packetBuffer[0] = ' ';
+  }else if(packetBuffer[0] == 'c'){
+        MasonBot().fbRunarc( Xloc, Yloc, Thetaloc, Xexpected, Yexpected, Thetaexpected);
+        packetBuffer[0] = ' ';
   }else if (packetBuffer[0] == 'C'){
         MasonBot().controlRun(&count1, Xloc, Yloc, Thetaloc, Xexpected, Yexpected, Thetaexpected);
         packetBuffer[0] = ' ';
+  }else if(packetBuffer[0] == 'm'){
+    Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
+    Udp.write(mac, 6);
+    Udp.endPacket();
+    packetBuffer[0] = ' ';
   }
 }
 
@@ -214,7 +229,7 @@ void printWiFiStatus() {
 ////Counters for encoders
 void counter1() {  
   count1 += 1;
-  Serial.println(count1);
+  //Serial.println(count1);
 }
 
 void counter2() {
@@ -243,3 +258,4 @@ void counter3() {
 //  Serial.println(count2);
 //  Serial.println(count3);
 //}
+
