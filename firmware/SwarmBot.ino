@@ -65,6 +65,7 @@ float Yexpected; //buffer for pwm input
 float Thetaexpected; //buffer for pwm input
 
 int velocity = 0;
+int theta = 0;
 //************************************
 
 WiFiUDP Udp;
@@ -164,6 +165,7 @@ void loop() {
     Yexpected = atof(Yexpectedch);
     Thetaexpected = atof(Thetaexpectedch); 
     
+    theta = vel;
 
     
     //*********************************************
@@ -200,6 +202,8 @@ void loop() {
   }else if (packetBuffer[0] == 'C'){
         MasonBot().controlRun(&count1, Xloc, Yloc, Thetaloc, Xexpected, Yexpected, Thetaexpected);
         packetBuffer[0] = ' ';
+  }else if (packetBuffer[0] == 'T'){
+        MasonBot().angle_control(int theta){
   }else if(packetBuffer[0] == 'm'){
     Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
     Udp.write(mac, 6);
