@@ -224,9 +224,9 @@ void MasonBot::controlRun(int *count, float Xloc, float Yloc, float Thetaloc, fl
 }
 
 void MasonBot::angle_control(int theta){
-	double f1 = cos(150 - theta)
-	double f2 = cos(30 - theta)
-	double f3 = cos(270 - theta)
+	double f1 = cos(150 - theta);
+	double f2 = cos(30 - theta);
+	double f3 = cos(270 - theta);
 		
 	double f1t = abs(f1);
 	double f2t = abs(f2);
