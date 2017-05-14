@@ -223,6 +223,46 @@ void MasonBot::controlRun(int *count, float Xloc, float Yloc, float Thetaloc, fl
 	_stop_all_motors();
 }
 
+void MasonBot::angle_control(int theta){
+	double f1 = cos(150 - theta)
+	double f2 = cos(30 - theta)
+	double f3 = cos(270 - theta)
+		
+	double f1t = abs(f1);
+	double f2t = abs(f2);
+	double f3t = abs(f3);
+	double f_max = 0;
+	double f_max_ard = 0;	
+
+
+  if ((f1t>f2t) & (f1t>f3t))
+	f_max = f1t;
+  else if(f2t>f3t)
+	f_max = f2t;
+  else 
+	f_max = f3t;
+
+	if (f_max != 0)				//if max force is non-zero
+		f_max_ard = (250/f_max) 
+	else				        //if max force is 0 (i.e STOP)
+		f_max_ard = 0;
+	
+	int dc1_ard = int(f1t*f_max_ard);	//normalized duty-cycle1
+	int dc2_ard = int(f2t*f_max_ard);	//normalized duty-cycle2
+	int dc3_ard = int(f3t*f_max_ard);	//normalized duty-cycle3
+	
+
+	_M1Dirset(f1);
+	_M2Dirset(f2);
+	_M3Dirset(f3);
+		 	
+
+	_motor1(dc1_ard);
+	_motor2(dc2_ard);
+	_motor3(dc3_ard);
+
+}
+
 
 void MasonBot::_robo_move(int x, int y, int w, int velocity){
 	//matrix equation to calc. forces for each of the motors of the holonomic robot
